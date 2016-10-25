@@ -117,3 +117,4 @@ Then, MASCOT can be run as follows:
 `host1:$ ./ot-offline.x -p 0 -c`
 
 `host2:$ ./ot-offline.x -p 1 -c`
+#spdz-linalg
