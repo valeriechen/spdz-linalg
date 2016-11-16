@@ -10,7 +10,6 @@ import math
 import util
 import operator
 
-
 class MPCThread(object):
     def __init__(self, target, name, args = [], runtime_arg = None):
         """ Create a thread from a callable object. """
@@ -2009,5 +2008,96 @@ def getNamedTupleType(*names):
             return self.__type__(x.reveal() for x in self)
     return NamedTuple
 
+class newMatrix():
+    A = []
+    b = []
+    def createMatrixA(self):
+        A1 = []
+	b1 = []
+	readIntoA = True
+	with open('/home/valerio/coding/SPDZ-2/Programs/Source/input.txt', 'r') as f:
+	  for line in f:
+	    line = line.strip()
+	    if line == 'NEXT':
+	    	readIntoA = False
+	    elif len(line) > 0 and readIntoA:
+	      A1.append(list(map(int, line.split(','))))
+	    else:
+	      b1.append(list(map(int, line.split(','))))
+
+	A2 = []
+	b2 = []
+	readIntoA = True
+	with open('/home/valerio/coding/SPDZ-2/Programs/Source/input1.txt', 'r') as f:
+	  for line in f:
+	    line = line.strip()
+	    if line == 'NEXT':
+	    	readIntoA = False
+	    elif len(line) > 0 and readIntoA:
+	      A2.append(list(map(int, line.split(','))))
+	    else:
+	      b2.append(list(map(int, line.split(','))))
+
+	#add two As together and two bs together 
+	A = []
+        b = []
+	rows = len(A1)
+	cols = len(A1[0])
+	for r in range(rows):
+		row = []
+		for c in range(cols):
+			row.append(A1[r][c] + A2[r][c])
+		A.append(row)
+	for r in range(1):
+		row = []
+		for c in range(len(b1[0])):
+			row.append(b1[r][c] + b2[r][c])
+		b.append(row)
+	return A
+
+    def createMatrixb(self):
+        A1 = []
+	b1 = []
+	readIntoA = True
+	with open('/home/valerio/coding/SPDZ-2/Programs/Source/input.txt', 'r') as f:
+	  for line in f:
+	    line = line.strip()
+	    if line == 'NEXT':
+	    	readIntoA = False
+	    elif len(line) > 0 and readIntoA:
+	      A1.append(list(map(int, line.split(','))))
+	    else:
+	      b1.append(list(map(int, line.split(','))))
+
+	A2 = []
+	b2 = []
+	readIntoA = True
+	with open('/home/valerio/coding/SPDZ-2/Programs/Source/input1.txt', 'r') as f:
+	  for line in f:
+	    line = line.strip()
+	    if line == 'NEXT':
+	    	readIntoA = False
+	    elif len(line) > 0 and readIntoA:
+	      A2.append(list(map(int, line.split(','))))
+	    else:
+	      b2.append(list(map(int, line.split(','))))
+
+	#add two As together and two bs together 
+	A = []
+        b = []
+	rows = len(A1)
+	cols = len(A1[0])
+	for r in range(rows):
+		row = []
+		for c in range(cols):
+			row.append(A1[r][c] + A2[r][c])
+		A.append(row)
+	for r in range(1):
+		row = []
+		for c in range(len(b1[0])):
+			row.append(b1[r][c] + b2[r][c])
+		b.append(row)
+	print(b[0])
+	return b[0]
 
 import library
