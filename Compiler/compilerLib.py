@@ -70,7 +70,7 @@ def run(filename, options, param=-1, merge_opens=True, emulate=True, \
     if prog.main_thread_running:
         prog.update_req(prog.curr_tape)
     print 'Program requires:', repr(prog.req_num)
-    print 'Cost:', prog.req_num.cost()
+    #print 'Cost:', prog.req_num.cost()
     print 'Memory size:', prog.allocated_mem
 
     # finalize the memory
