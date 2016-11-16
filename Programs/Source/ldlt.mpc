@@ -1,0 +1,42 @@
+def ldlt(a, b):
+   d = len(a)
+   for j in range(d):
+      for k in range(j):
+         a_jk_kk = a[j][k] * a[k][k]
+         for i in range(j, d):
+            otemp = a[i][k] * a_jk_kk
+            a[i][j] = a[i][j] - otemp
+      for k in range(j+1, d):
+         a[k][j] = a[k][j]/a[j][j]
+
+   for i in range(d):
+      for j in range(i):
+         otemp = a[i][j]*b[j]
+         b[i] = b[i] - otemp
+
+   for i in range(d):
+      b[i] = b[i]/a[i][i]
+
+   for i in range(d-1, -1, -1):
+      for j in range(d-1, i, -1):
+         otemp = a[j][i] * b[j]
+	 b[i] = b[i] - otemp
+
+   print_ln('RESULTS!!! %s', [b[i].reveal() for i in range(d)])
+
+matrix = newMatrix()
+A = matrix.createMatrixA()
+b = matrix.createMatrixb()
+
+secretMatrixA = []
+for r in range(len(A)):
+   row = []
+   for c in range(len(A)):
+      row.append(sint(A[r][c]))
+   secretMatrixA.append(row)
+
+secretMatrixb = []
+for r in range(len(b)):
+   secretMatrixb.append(sint(b[r]))
+
+ldlt(secretMatrixA, secretMatrixb)
