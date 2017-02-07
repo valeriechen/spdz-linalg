@@ -1,42 +1,59 @@
+program.bit_length = 80
+program.security = 40
+
 def ldlt(a, b):
    d = len(a)
-   for j in range(d):
-      for k in range(j):
-         a_jk_kk = a[j][k] * a[k][k]
-         for i in range(j, d):
-            otemp = a[i][k] * a_jk_kk
-            a[i][j] = a[i][j] - otemp
-      for k in range(j+1, d):
-         a[k][j] = a[k][j]/a[j][j]
 
-   for i in range(d):
-      for j in range(i):
+   @for_range(d)
+   def loop(j):
+      @for_range(j)
+      def inner(k):
+         @for_range(j,d)
+         def f(i):
+            a[i][j] = a[i][j] - (a[j][k] * a[k][k] * a[i][k])
+      @for_range(j+1, d)
+      def ff(l):
+         a[l][j] = a[l][j] / a[j][j]
+
+   #for r in range(d):
+   #   for c in range(d):
+   #      print_ln('%s %s %s',r,c, a[r][c].reveal())
+
+   @for_range(d)
+   def loop1(i):
+      @for_range(i)
+      def f1(j):
          otemp = a[i][j]*b[j]
          b[i] = b[i] - otemp
 
-   for i in range(d):
-      b[i] = b[i]/a[i][i]
+   #ALL GOOD UNTIL HERE!!
 
-   for i in range(d-1, -1, -1):
-      for j in range(d-1, i, -1):
-         otemp = a[j][i] * b[j]
-	 b[i] = b[i] - otemp
+   @for_range(d)
+   def loop2(i):
+       b[i] = sfix(b[i]/a[i][i].reveal())
+   
+   @for_range(d-1, -1, -1)
+   def loop3(i):
+      @for_range(d-1, i, -1)
+      def inner1(j):
+         b[i] = b[i] - (a[j][i] * b[j])
 
-   print_ln('RESULTS!!! %s', [b[i].reveal() for i in range(d)])
+   for r in range(d):
+      print_ln('%s', b[r].reveal())
+
 
 matrix = newMatrix()
 A = matrix.createMatrixA()
 b = matrix.createMatrixb()
 
-secretMatrixA = []
+secreta = Matrix(len(A),len(A), sfix)
+secretb = Array(len(A), sfix)
+
 for r in range(len(A)):
-   row = []
    for c in range(len(A)):
-      row.append(sint(A[r][c]))
-   secretMatrixA.append(row)
+      secreta[r][c] = sfix(A[r][c])
 
-secretMatrixb = []
-for r in range(len(b)):
-   secretMatrixb.append(sint(b[r]))
+for r in range(len(A)):
+   secretb[r] = sfix(b[r])
 
-ldlt(secretMatrixA, secretMatrixb)
+ldlt(secreta, secretb)
