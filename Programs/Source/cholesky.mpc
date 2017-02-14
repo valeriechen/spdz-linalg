@@ -1,0 +1,53 @@
+program.bit_length = 80
+program.security = 40
+
+def result(a):
+	x = regint(0)
+	diff = (a[0]*a[0])-a[1]
+        #print_ln('%s %s %s', a[0].reveal(), a[1].reveal(), diff.reveal())
+	if_then((diff < sfix(0.0001)).reveal())
+        if_then((diff > sfix(-0.0001)).reveal())
+        print_ln('%s %s %s', a[0].reveal(), a[1].reveal(), diff.reveal())
+	x = regint(1)
+        end_if()
+	end_if()
+	return x
+
+def my_sqrt(x):
+	a = Array(2,sfix)
+	a[0] = sfix(20)
+	a[1] = sfix(x)
+	@while_do(lambda z: result(a) < 1, regint(0))
+	def f(i):
+		a[0] = (a[0] + (a[1]/a[0]))/sfix(2)
+		return i
+	return a[0]
+		
+matrix = newMatrix()
+A = matrix.createMatrixA()
+b = matrix.createMatrixb()
+
+secretMatrixA = Matrix(len(A), len(A), sfix)
+secretMatrixb = Array(len(A), sfix)
+
+for r in range(len(A)):
+    for c in range(len(A)):
+        secretMatrixA[r][c] = sfix(A[r][c])
+
+for r in range(len(A)):
+    secretMatrixb[r] = sfix(b[r])
+
+print_ln('%s', my_sqrt(sfix(390)).reveal())
+print_ln('%s', my_sqrt(sfix(560)).reveal())
+
+array = Array(2, sfix)
+array[0] = sfix(100)
+array[1] = sfix(200)
+
+print_ln('%s', my_sqrt(array[0]).reveal())
+print_ln('%s', my_sqrt(array[1]).reveal())
+
+@for_range(2)
+def loop(i): 
+    x = my_sqrt(array[i])
+    print_ln('%s', x.reveal())

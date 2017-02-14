@@ -1,0 +1,20 @@
+program.bit_length = 80
+program.security = 40
+
+def result(a):
+        x = regint(0)
+        diff = (a[0]*a[0])-a[1]
+	if_then((diff < sfix(0.0001)).reveal())
+        x = regint(1)
+	end_if()
+	return x
+
+a = Array(2, sfix)
+a[0] = sfix(20)
+a[1] = sfix(380)
+
+@while_do(lambda z: result(a) < 1, regint(0))
+def f(i):
+   a[0] = (a[0] + (a[1]/a[0]))/sfix(2)
+   return i 
+print_ln('%s', a[0].reveal())
