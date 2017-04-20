@@ -1,0 +1,261 @@
+% COMMANDS
+
+\renewcommand{\emptyset}{\varnothing}
+
+% Colors
+
+\definecolor{dblue}{rgb}{0.00, 0.50, 0.90}
+\definecolor{lblue}{rgb}{0.70, 0.80, 1.00}
+\definecolor{lpink}{rgb}{0.90, 0.70, 1.00}
+\definecolor{lgreen}{rgb}{0.80, 0.95, 0.75}
+\definecolor{lred}{rgb}{0.99, 0.50, 0.55}
+\definecolor{lyellow}{rgb}{1.00, 0.95, 0.75}
+\definecolor{llgrey}{rgb}{0.95, 0.95, 0.95}
+\definecolor{salmon}{rgb}{0.99, 0.90, 0.90}
+
+% UC security things
+
+\newcommand{\secs}{\mathsf{aggregation}}
+\newcommand{\Pss}{\Pi_\secs}
+\newcommand{\Fss}{\mathcal F_\secs}
+\newcommand{\Sss}{\mathcal S_\secs}
+
+
+\newcommand{\elect}{\mathsf{election}}
+\newcommand{\Pelect}{\Pi_\elect}
+\newcommand{\Felect}{\mathcal F_\elect}
+\newcommand{\Select}{\mathcal S_\elect}
+
+\newcommand{\Commit}{\mathsf{Commit}}
+\newcommand{\Open}{\mathsf{Open}}
+\newcommand{\Pcomm}{\Pi_\Commit}
+\newcommand{\Fcomm}{\mathcal F_\Commit}
+\newcommand{\Scomm}{\mathcal S_\Commit}
+
+\newcommand{\Fnoisegen}{\mathcal{F}_{\mathsf{noise}}}
+\newcommand{\Pdpa}{\Pi_{\mathsf{dp}\textrm{-}\mathsf{aggregation}}}
+\newcommand{\Pbinomial}{\Pi_\mathsf{binomial}}
+\newcommand{\Pgauss}{\Pi_\mathsf{gauss}}
+\newcommand{\Pfirstlaplace}{\Pi_\mathsf{laplace1}}
+\newcommand{\Psecondlaplace}{\Pi_\mathsf{laplace2}}
+\newcommand{\Ppack}{\Pi_\mathsf{pack}}
+
+
+% CS things
+\newcommand{\Oh}{ \mathcal{O} }
+\newcommand{\QuasiOh}{ \widetilde{ \mathcal{O} } }
+
+%\newcommand{\B}			{\mathrm{B}}
+\newcommand{\KB}		{\mathrm{KB}}
+\newcommand{\MB}		{\mathrm{MB}}
+\newcommand{\GB}		{\mathrm{GB}}
+
+\newcommand{\ms}		{\mathrm{ms}}
+\newcommand{\mus}		{\mathrm{{\mu}s}}
+
+% FE
+\newcommand{\FE}{\mathsf{FE}} % FE
+\renewcommand{\sec}{\lambda} % sec param
+\newcommand{\PP}{\mathsf{PP}} % public parameters for FE
+\newcommand{\MK}{\mathsf{MK}} % master secret key for FE
+\newcommand{\Key}{\mathsf{Key}} % enc/dec secret key for (secret-key) FE
+\newcommand{\Ctxt}{\mathsf{Ctxt}} % enc/dec secret key for (secret-key) FE
+
+\renewcommand{\sf}{\mathsf{sf}} % semi-functional flag
+\newcommand{\f}{\mathsf{f}} % functional flag
+
+
+% Encodings
+\newcommand{\A}{\mathbf{A}} % matrix for encoding
+\renewcommand{\S}{\mathbf{S}} % secret matrix (tensored)
+\newcommand{\B}{\mathbf{B}} % BP matrix
+\newcommand{\E}{\mathbf{E}} % error matrix
+\newcommand{\Y}{\mathbf{Y}} % result encoding matrix
+\newcommand{\D}{\mathbf{D}} % trapdoor'd matrix
+\newcommand{\J}{\mathbf{J}} % left bookend
+
+\newcommand{\TrapSam}{\mathsf{TrapSam}}
+\newcommand{\PreimgSam}{\mathsf{PreimgSam}}
+
+
+
+% Sets, fields, rings, groups, etc...
+\newcommand{\Id}{\mathbb{I}} % the identity matrix
+\newcommand{\Z}{\mathbb{Z}} % the integers
+\newcommand{\N}{\mathbb{N}} % the non-negative integers
+\newcommand{\F}{\mathbb{F}} % a finite field
+\newcommand{\K}{\mathbb{K}} % a finite field
+\newcommand{\Kbot}{\mathbb{K}_{\bot}} % a finite field extended with bottom
+
+\renewcommand{\P}{\{1,\dots,n\}} % player set $\{1,\dots,n\}$
+
+%\newcommand{\K}{\mathcal{K}} % key space
+\newcommand{\M}{\mathcal{M}} % message space
+\newcommand{\T}{\mathcal{T}} % tag space
+\newcommand{\R}{\mathcal{R}} % randomness space
+
+\newcommand{\tensor}{\otimes}
+\newcommand{\unit}{\mathbf{u}}
+\newcommand{\transpose}[1]{#1^{\intercal}}
+\newcommand{\identitymatrix}{\mathbb{I}}
+%\newcommand{\identitymatrix}{\mathbb{1}}  % requires the bbold package
+%\newcommand{\cartesian}[1]{{\times #1}}
+\newcommand{\cartesian}[1]{{\times \! #1}}
+%\newcommand{\cprod}{\bigtimes}  % requires the mathabx package
+
+
+
+% Probability and DP
+\newcommand{\Avg}{\textup{E}} % Average of random variables
+
+\newcommand{\mechanism}[1]{\mathcal{ #1 }}
+\newcommand{\norm}[1]				{\left\lVert #1 \right\rVert}
+\newcommand{\e}	[1]						{\mathbf{e}^{#1}}
+%\newcommand{\e}	[1]						{\mathrm{exp}(#1)}
+\newcommand{\sensitivity}[2]		{\Delta_{#1} #2}
+\newcommand{\intype}					{\mathcal{X}}
+\newcommand{\dstype}					{\N^{\intype}}
+\newcommand{\ds}						{D}
+
+\newcommand{\given}			{\; | \;}
+\newcommand{\condpr}[2]		{\pr{#1 \given #2}}
+\newcommand{\distsOver}[1]		{\Delta #1}
+
+%\newcommand{\hammingweight}[1]	{\mathrm{H}(#1)}
+\newcommand{\hammingweight}[1]	{\mathrm{w_H}(#1)}
+
+%\newcommand{\D}{\mathcal{D}} % a distribution
+\newcommand{\U}{\mathcal{U}} % the uniform distribution
+
+\newcommand{\coin}						{\mathcal{C}}
+\newcommand{\uniform}[1]			{\mathcal{U}(#1)}
+\newcommand{\binomial}[1]			{\mathcal{B}(#1)}
+\newcommand{\gaussian}[1]			{\mathcal{N}(#1)}
+\newcommand{\laplacian}[1]			{\mathrm{Lap}(#1)}
+\newcommand{\distribution}			{\mathcal{D}}
+\newcommand{\leftovernoise}		{\mathcal{E}}
+
+\newcommand{\pr}[1]					{\Pr \left[ #1 \right]}
+\newcommand{\floor}[1]					{\lfloor#1\rfloor}
+\newcommand{\ceil}[1]					{\left\lceil#1\right\rceil}
+
+
+
+% Labels
+
+\newcommand{\pk}{\mathsf{pk}}
+\newcommand{\sk}{\mathsf{sk}}
+
+
+\newcommand{\off}{\texttt{off}}
+
+\newcommand{\Sim}{\mathcal{S}}
+
+
+
+% Operators
+
+\newcommand{\AND}{\wedge}
+\newcommand{\OR}{\vee}
+\newcommand{\bigAND}{\bigwedge}
+\newcommand{\bigOR}{\bigvee}
+
+\newcommand{\asn}{\gets} % to be read as ``computed as'' or ``taken according to the distribution...'' or ``taken uniformly from...''
+
+\newcommand{\ParamGen}{\mathsf{ParamGen}}
+\newcommand{\Setup}{\mathsf{Setup}}
+\newcommand{\KeyGen}{\mathsf{KeyGen}}
+\newcommand{\Enc}{\mathsf{Enc}}
+\newcommand{\Dec}{\mathsf{Dec}}
+\newcommand{\Add}{\mathsf{Add}}
+\newcommand{\ek}{ek}
+\newcommand{\dk}{dk}
+\newcommand{\plaintext}{m}
+\newcommand{\ciphertext}{e}
+\newcommand{\plaintextspace}{\mathcal{P}}
+\newcommand{\ciphertextspace}{\mathcal{E}}
+\newcommand{\INDCPA}{\textrm{IND-CPA}}
+
+\newcommand{\Share}{\mathsf{Share}}
+\newcommand{\SimShare}{\mathsf{SimShare}}
+\newcommand{\Shamir}{\mathsf{Shamir}}
+\newcommand{\PackedShamir}{\mathsf{PackedShamir}}
+\newcommand{\RS}{\mathsf{RS}}
+\newcommand{\Rec}{\mathsf{Recon}}
+\newcommand{\SSS}{\mathsf{SSS}}
+
+\newcommand{\share}{\sigma}
+\newcommand{\secret}{m}
+
+\newcommand{\MAC}{\mathsf{MAC}}
+\newcommand{\Encode}{\mathsf{Encode}}
+
+
+\newcommand{\Adv}{\mathsf{Adv}}
+\newcommand{\Gen}{\mathsf{Gen}}
+\newcommand{\AExpm}{\mathsf{Exp}}
+
+
+
+\newcommand{\ineff}{\mathsf{ineff}}
+\newcommand{\superpoly}{\mathsf{superpoly}}
+\newcommand{\poly}{\mathsf{poly}}
+\newcommand{\negl}{\mathsf{negl}}
+\newcommand{\const}{\mathsf{const}}
+\newcommand{\polylog}{\mathsf{polylog}}
+
+\newcommand{\normtwo}[1]{\|{#1}\|_2}
+\newcommand{\normI}[1]{\|{#1}\|_\infty}
+
+
+
+% Environments
+\newenvironment{boxfig}[2]{% {#1}{#2} = {Caption}{label}
+\begin{figure}[ht!]
+  \newcommand{\FigCaption}{#1}
+  \newcommand{\FigLabel}{#2}
+  \vspace{-\medskipamount}
+  \begin{center}
+    \begin{small}
+      \begin{tabular}{@{}|@{~~}l@{~~}|@{}}
+        \hline
+        \rule[-1.5ex]{0pt}{1ex}
+        \begin{minipage}[b]{.96\linewidth}
+          \vspace{1ex}
+          \smallskip
+          }{%
+        \end{minipage}\\
+        \hline
+      \end{tabular}
+    \end{small}
+    \vspace{-1\bigskipamount}
+  \end{center}
+    \caption{\small \FigCaption}
+    \label{\FigLabel}
+%  \vspace{-0.3cm}
+\end{figure}
+}
+
+
+
+% LATEX
+
+% this crossreferences description items
+\makeatletter
+\let\orgdescriptionlabel\descriptionlabel
+\renewcommand*{\descriptionlabel}[1]{%
+  \let\orglabel\label
+  \let\label\@gobble
+  \phantomsection
+  \edef\@currentlabel{#1}%
+  %\edef\@currentlabelname{#1}%
+  \let\label\orglabel
+  \orgdescriptionlabel{#1}%
+}
+\makeatother
+
+
+
+
+% a temporary counter
+\newcounter{tempcount}
