@@ -52,6 +52,7 @@ Programs/Public-Input/*
 *.bbl
 *.bcf
 *.blg
+paper/*.pdf
 
 
 # Logs and databases #
