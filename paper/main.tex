@@ -81,7 +81,7 @@ First, we ran the two algorithms two gauge time and error rates for matrices of 
 
 \begin{figure}[h]
   \includegraphics[width=\linewidth]{sqrt.jpg}
-  \caption{ (Top) 64 bit (Bottom) 32 bit results }
+  \caption{ (Top) 64 bit (Bottom) 32 bit results for comparing square roots}
   \label{fig:result1}
 \end{figure}
 
@@ -91,7 +91,7 @@ Comparing square root for Cholesky. In SPDZ, we hypothesized that division would
 For CGD, we decide to test if L2 norm vs Linfinity would make a difference. One utilizes comparisons and the other addition and square root. 
 \begin{figure}[h]
   \includegraphics[width=\linewidth]{l2.jpg}
-  \caption{ (Top) 64 bit (Bottom) 32 bit results }
+  \caption{ (Top) 64 bit (Bottom) 32 bit results for L2 Norm. }
   \label{fig:result1}
 \end{figure}
 
@@ -102,18 +102,18 @@ Averaged results Averaged column 3 over 30 samples with n = 100000 (avg cn 1.77?
 N = 100000
 \begin{figure}[h]
   \includegraphics[width=\linewidth]{results1.jpg}
-  \caption{(Left) Comparison between different methods of solving linear systems: running time in seconds for Cholesky, LDLT, and CGD (with 5, 10, 15, and 20 iterations) as a function of input dimension. (Middle) Accuracy of CGD as a function of the input on the condition number of the input matrix $A$ with $d = 20$. (Right) Accuracy of Cholesky, LDLT, and CGD, as a function of the input dimensionality $d$. (Top) Fixed-point numbers with the $b = 80$ bits, with 60 in the fractional part. (Bottom) $b = 41$, with 28 in the fractional part}
+  \caption{(Left) For N = 10000: Comparison between different methods of solving linear systems: running time in seconds for Cholesky, LDLT, and CGD (with 5, 10, 15, and 20 iterations) as a function of input dimension. (Middle) Accuracy of CGD as a function of the input on the condition number of the input matrix $A$ with $d = 20$. (Right) Accuracy of Cholesky, LDLT, and CGD, as a function of the input dimensionality $d$. (Top) Fixed-point numbers with the $b = 80$ bits, with 60 in the fractional part. (Bottom) $b = 41$, with 28 in the fractional part}
   \label{fig:result2}
 \end{figure}
 
 N = 1000
 \begin{figure}[h]
   \includegraphics[width=\linewidth]{results2.jpg}
-  \caption{(Left) Comparison between different methods of solving linear systems: running time in seconds for Cholesky, LDLT, and CGD (with 5, 10, 15, and 20 iterations) as a function of input dimension. (Middle) Accuracy of CGD as a function of the input on the condition number of the input matrix $A$ with $d = 20$. (Right) Accuracy of Cholesky, LDLT, and CGD, as a function of the input dimensionality $d$. (Top) Fixed-point numbers with the $b = 80$ bits, with 60 in the fractional part. (Bottom) $b = 41$, with 28 in the fractional part}
+  \caption{(Left) For N = 1000: Comparison between different methods of solving linear systems: running time in seconds for Cholesky, LDLT, and CGD (with 5, 10, 15, and 20 iterations) as a function of input dimension. (Middle) Accuracy of CGD as a function of the input on the condition number of the input matrix $A$ with $d = 20$. (Right) Accuracy of Cholesky, LDLT, and CGD, as a function of the input dimensionality $d$. (Top) Fixed-point numbers with the $b = 80$ bits, with 60 in the fractional part. (Bottom) $b = 41$, with 28 in the fractional part}
   \label{fig:result2}
 \end{figure}
 
-\vc{talk about outliers in these cases, skews results}
+\vc{need to replace with correct plot, found where the error came from}
 
 As expected, utilizing more bits gives much better accuracy. In both cases, the error results are comparable to the garbled circuits paper. However, we did find that the original experiment truncated the generated data at 12 decimal places, however we modified it so that we could work with the full representation of the number to get a better understanding of how accurate our algorithm is.  
 
@@ -124,6 +124,22 @@ Condition number plot
   \includegraphics[width=\linewidth]{conditionnumber.jpg}
   \caption{(Left) Comparison between different methods of solving linear systems: running time in seconds for Cholesky, LDLT, and CGD (with 5, 10, 15, and 20 iterations) as a function of input dimension. (Middle) Accuracy of CGD as a function of the input on the condition number of the input matrix $A$ with $d = 20$. (Right) Accuracy of Cholesky, LDLT, and CGD, as a function of the input dimensionality $d$. (Top) Fixed-point numbers with the $b = 80$ bits, with 60 in the fractional part. (Bottom) $b = 41$, with 28 in the fractional part}
   \label{fig:result3}
+\end{figure}
+
+3 party results on one machine
+
+\begin{figure}[h]
+  \includegraphics[width=\linewidth]{3players.jpg}
+  \caption{Results for 3 players. Since this is not the average of 30 runs, the lines aren't as straight yet. In general the results are pretty comparable to the 2 players. There is a noticeable overhead that each additional party incurs compared to running the same computation with less parties. I will include a table later to estimate the increase for each party.}
+  \label{fig:result4}
+\end{figure}
+
+4 party results on one machine
+
+\begin{figure}[h]
+  \includegraphics[width=\linewidth]{4players.jpg}
+  \caption{(Results for 4 players. Since this is not the average of 30 runs, the lines aren't as straight yet. In general the results are pretty comparable to the 2 players. }
+  \label{fig:result4}
 \end{figure}
 
 \vc{insert table comparison here??}
