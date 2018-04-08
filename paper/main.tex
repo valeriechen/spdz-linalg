@@ -150,12 +150,13 @@ To implement SGD, we utilized the update function presented in [2]: $ w = w - \f
 
 \begin{figure}[H]
 \centering
-  \includegraphics[scale=0.6]{mnist.jpg}
-  \caption{Varying number of bits and recreating results in [2].}
+  \includegraphics[scale=0.6]{mnistarcene.png}
+  \caption{Varying number of bits and recreating results for MNIST (left) and Arcene (right) in [2].}
   \label{fig:result4}
 \end{figure}
 
-\vc{Run these same results on Arcene dataset too}
+\noindent
+The dimensions of the vector that we were predicting for MNIST was only 784, which comes from the 28 by 28 image. This is small compared to the size 10,000 vector that Arcene has. This could be an explanation for why the SGD prediction capabilities are not as good for Arcene when compared to MNIST and could explain why we need more bits in SPDZ to achieve plaintext comparable accuracy. 
 
 \noindent
 \\Using the same SGD algorithm, we also compared the resulting root mean squared error (RMSE) in 7 open sourced datasets of ranging sizes.
