@@ -28,6 +28,8 @@
 
 
 \usepackage{amsthm}
+\usepackage{amsmath}
+
 
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
@@ -47,10 +49,15 @@
 \newtheorem{observation}[theorem]{Observation}
 \newtheorem{claim}[theorem]{Claim}%[section]
 
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
 
 
 \input{symbols}
-
 
 \newcommand{\mr}[1]{{\textcolor{lblue}{\textbf{Mariana:} #1}}}
 \newcommand{\vc}[1]{{\textcolor{lred}{\textbf{Valerie:} #1}}}
@@ -63,9 +70,250 @@
 \begin{document}
 
 \maketitle
+
+\section{Background}
+
+Regression analysis and other machine learning techniques aim to build a model that fits a set of predictors to the dependent variable. These are commonly utilized technique in real world industries ranging from finance to medicine to security and can be crucial in understanding large scale consumer behavior. With the advent of big data and recent technological advances, it is becoming increasingly simple for entities to store vast amounts of user data. For example, individual hospitals might have their own patient data, but sharing this data for prediction or model-building purposes would be against modern day privacy laws. Secure multi-party computation (MPC) aims to solve this problem by providing a mechanism through which different parties and supply their data for joint computation without revealing individual values in each database.\\
+
+\noindent
+Two common regression techniques are linear and logistic regression. These are the fundamental building blocks for many more complex machine learning algorithms. In this project, our goal was to evaluate the efficacy of SPDZ as a viable secure multi-party framework for complex regression and machine learning algorithms. This paper also briefly explores the efficacy of neural networks in a secure computation setting.\\
+
+\noindent
+Insert stuff about SPDZ background / why we chose to use it over other things. \\ 
+
+\noindent
+Two previous works that this paper specifically builds off of are [1,2]. 
+
+\section{Algorithms}
+
+Our goal was to conduct a thorough investigation of the SPDZ framework in comparison to other similar frameworks of similar nature [1,2]. The main algorithms that we considered were, LDLT Decomposition, Cholesky, Conjugate Gradient Descent (CGD), Stochastic Gradient Descent (SGD), Logistic Regression, and Neural Networks. The algorithms for the first three were first presented in [1] and the latter two in [2], but in the sections below we further detail the algorithms and modifications that were made to them to accomodate the SPDZ framework. The algorithms were implemented in the SPDZ framework as a proof-of-concept as well as in python as a plaintext verification of the accuracy of the secure version. Even though the files that is inputted into SPDZ are almost derived from python, there were capabilities that were missing in this framework that directly impacted the implementation of the algorithm. The following subsections detail the five algorithms that were investigated in this work as well as SPDZ specific changes that were made to make the implementation work. \\
+
+\noindent
+A general problem that differed SPDZ from a numpy framework in python was the lack of  vectorization, meaning there was no support for matrix operations. This made sense because even basic arithmetic and multiplication was difficult to implement in a secure setting. However, we see this as an important avenue of development due to the increasing importance of ... finish this sentence. LOOK INTO HOW MATRICES ARE WRITTEN - are there operations?
+
+\subsection{Cholesky}
+
+The Cholesky decomposition algorithm relies on having a Hermitian positive-definite matrix A and a vector b as input and outputs a factorization of the form $LL^T$ where $L$ is a lower triangular matrix with real and positive diagonal entries and $L^T$ is the conjugate transport of L, which in this case is just $L^T$. Then using $L$, we compute $y$ where $L^Ty = b$. Finally the solution $\beta$ where $A\beta = y$ is computed. When given a matrix that fits the Hermitian, positive-definite pattern, this method outperforms traditional LU decomposition, for solving linear equations. A more detailed algorithm is presented below: 
+
+\begin{algorithm}[H]
+\caption{}\label{euclid}
+\begin{algorithmic}[1]
+\State $\textit{Let a be the input matrix, d be dimensions}$
+\State 1. Decompose into $LD$
+\For {j = 0, $j < d$}
+\For {k = 0, $k < j$}
+\For {i = j, $i < d$}
+\State $a[i][j] = a[i][j] - (a[i][k] *a[j][k])$.
+\EndFor
+\State $a[j][j] = sqrt(a[j][j])$
+\For {k = j+1, k < d}
+\State $a[k][j] = a[k][j] / a[j][j]$
+\EndFor 
+\EndFor
+\EndFor
+\State 2. Compute $y$ where $L^Ty = b$
+\For {i = 0, $i < d$}
+\For {j = 0, $j < i$}
+\State $b[i] = b[i] - (a[i][j] * y[i])$
+\EndFor 
+\State $y[i] = b[i] / a[i][i]$
+\EndFor
+\State 3. Compute the solution $\beta$ where $A\beta = y$
+\For {$i = d-1$, $i \geq 0$, $i = i - 1$}
+\For {j = 0, $j < i$}
+\State $b[i] = b[i] - (a[i][j] * y[i])$
+\EndFor 
+\State $y[i] = b[i] / a[i][i]$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+Runtime
+
+\subsection{LDLT}
+
+The $LDL^T$, also known as the LDL decomposition, algorithm is a close variant of the Cholesky algorithm presented in the section above. As the name suggests, the input matrix A is factored into $LDL^T$, where $L$ is a lower triangular matrix and $D$ is a diagonal matrix. We can then use $L$ and $D$ to solve for the solution to the linear equations by computing $b'$ where $Lb' = b$ and then the solution $b''$ where $Db'' = b'$. A detailed algorithm is detailed below: 
+
+\begin{algorithm}[H]
+\caption{}\label{euclid}
+\begin{algorithmic}[1]
+\State $\textit{Let a be the input matrix, d be dimensions, b be the output vector}$
+\State 1. Decompose into $LD$
+\For {j = 0, $j < d$}
+\For {k = 0, $k < j$}
+\State $temp = a[j][k] * a[k][k]$
+\For {i = j, $i < d$}
+\State $a[i][j] = a[i][j] - (a[i][k] *temp)$.
+\EndFor
+\For {k = j+1, k < d}
+\State $a[k][j] = a[k][j] / a[j][j]$
+\EndFor 
+\EndFor
+\EndFor
+\State 2. Compute $b'$ where $Lb'= b$
+\For {i = 0, $i < d$}
+\For {j = 0, $j < i$}
+\State $b[i] = b[i] - (a[i][j] * b[j])$
+\EndFor 
+\EndFor
+\State 3. Compute $b''$ where $Db'' = b'$
+\For {i = 0, i < d}
+\State $b[i] = b[i] / a[i][i]$
+\EndFor 
+\State 4. Compute $\beta$ where $L\beta = b''$ 
+\For {$i = d-1$, $i \geq 0$, $i = i - 1$}
+\For {$j = d-1$, $j > i$, $j = j -1$}
+\State $b[i] = b[i] - (a[j][i] * b[j])$
+\EndFor 
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\noindent
+Runtime. The LDL variant, if efficiently implemented, requires the same space and computational complexity to construct and use but avoids extracting square roots. 
+
+\subsection{Conjugate Gradient Descent}
+
+Conjugate Gradient Descent, also known as CGD, is a popular numerical method for solving linear equations of the symmetric, positive-definite form. The difference between CGD and the previous two algorithms is that this is iterative, which makes it particularly suitable for large systems where a direct decomposition method would be too slow. 
+
+\begin{algorithm}[H]
+\caption{}\label{euclid}
+\begin{algorithmic}[1]
+\State $\textit{Let a be the input matrix, d be dimensions}$
+\State $\theta = [0]*n$
+\State $gtilda = [0]*n$
+\State $p = [0]*n$
+for
+
+\For {$i = 0$, $i < iterations$}
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+Look at paper for algorithm modifications.
+
+Runtime why iterative makes it better
+
+\subsection{Stochastic Gradient Descent}
+
+Stochastic Gradient Descent, or SGD, \\
+
+\noindent
+Talk about batch normalization, which is also applicable to logistic regression.
+
+\begin{algorithm}[H]
+\caption{}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{MyProcedure}{}
+\State $\textit{stringlen} \gets \text{length of }\textit{string}$
+\State $i \gets \textit{patlen}$
+\BState \emph{top}:
+\If {$i > \textit{stringlen}$} \Return false
+\EndIf
+\State $j \gets \textit{patlen}$
+\BState \emph{loop}:
+\If {$\textit{string}(i) = \textit{path}(j)$}
+\State $j \gets j-1$.
+\State $i \gets i-1$.
+\State \textbf{goto} \emph{loop}.
+\State \textbf{close};
+\EndIf
+\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
+\State \textbf{goto} \emph{top}.
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Logistic Regression}
+
+Another popular regression method for two-class classification problems is logistic regression. The update function is a modification of the SGD update, $ w = w - \frac{1}{|B|} \alpha X^{T}_{B} \times (f(X_{B} \times w) - Y_{B})$ where $f(u)$ is the activation function $\frac{1}{1+e^{-u}}$. However, the exponential function is difficult to achieve in a secure setting, so one alternative is to approximate an exponential using a Taylor series and another is to use the secure computation friendly activation piecewise function defined by [2]: 
+
+\[
+  f(u) =
+  \begin{cases}
+                                   0 & \text{if $u < -0.5$} \\
+                                   u + 0.5 & \text{if $-0.5 \leq u \leq 0.5$} \\
+1 & \text{if $u > 0.5$}
+  \end{cases}
+\]
+
+
+What distinguishes logistic regression from the previous linear regression algorithms is the use of a nonlinear activation function. 
+
+\begin{algorithm}[H]
+\caption{}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{MyProcedure}{}
+\State $\textit{stringlen} \gets \text{length of }\textit{string}$
+\State $i \gets \textit{patlen}$
+\BState \emph{top}:
+\If {$i > \textit{stringlen}$} \Return false
+\EndIf
+\State $j \gets \textit{patlen}$
+\BState \emph{loop}:
+\If {$\textit{string}(i) = \textit{path}(j)$}
+\State $j \gets j-1$.
+\State $i \gets i-1$.
+\State \textbf{goto} \emph{loop}.
+\State \textbf{close};
+\EndIf
+\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
+\State \textbf{goto} \emph{top}.
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Another challenge to implementing logistic regression is that SPDZ does not support branching using if statements, since comparing a secret value without revealing the internal value will always return, no matter the comparison on the actual value. To work around this, we need to convert the piecewise function into circuits.
+
+\subsection{Neural Networks}
+
+Neural networks are extensions of the more basic regression algorithms presented above, which includes multiple layers of neurons and forward and backpropagation through the layers. Per the experiments in [2], we used two hidden layers and 128 neurons per layer.
+
+After each layer is a nonlinear activation function and an area worth experimenting in terms of MPC is the best type of activation function, which includes 
+
+We experiment with both the RELU and the square function as the activation function in the hidden layers and our proposed alternative to softmax function in the output layer. 
+
+Write out the formulas... as well as detail the implementation of approximating the activation function as well as softmax. 
+
+Since [2] did not detail the protocol, we provide a more in-depth description for replicating our results. 
+
+\begin{algorithm}[H]
+\caption{}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{MyProcedure}{}
+\State $\textit{stringlen} \gets \text{length of }\textit{string}$
+\State $i \gets \textit{patlen}$
+\BState \emph{top}:
+\If {$i > \textit{stringlen}$} \Return false
+\EndIf
+\State $j \gets \textit{patlen}$
+\BState \emph{loop}:
+\If {$\textit{string}(i) = \textit{path}(j)$}
+\State $j \gets j-1$.
+\State $i \gets i-1$.
+\State \textbf{goto} \emph{loop}.
+\State \textbf{close};
+\EndIf
+\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
+\State \textbf{goto} \emph{top}.
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\section{Datasets}
+
+This paper used a combination of existing, well-known and synthetically generated data. Many other papers (give examples) have also explored the MNIST and Arcene datasets as the canonical dataset for a proof-of-concept model. The MNIST is a classification dataset which consists of 60,000 black and white images of handwritten numbers from 0 to 9 scaled to a 28x28 pixel size. Each pixel is used as a feature which gives 784 total features in the dataset. The Arcene dataset is a two-class classification problem to distinguish cancerous from normal patients through mass spectrometric data. The mass spectrometric data is highly dimensional, with 10,000 features. A clarification of [2] is that we only explore both datasets in a binary setting, which is why the accuracy is so high for MNIST in particular.\\
+
+\noindent
+[1] presented a method for synthetic data generation that allowed varying of a few parameters which we took advantage to test the linear regression algorithms in different settings. The algorithm automatically 
+
+Talk about condition numbers here... ?
+
 \section{Experiments} 
 
-Our goal was to conduct a thorough investigation of the SPDZ framework in comparison to other similar frameworks of similar nature [1,2]. The main algorithms that we considered were, LDLT Decomposition, Cholesky, Conjugate Gradient Descent (CGD), and Stochastic Gradient Descent (SGD). The algorithms for the first three are presented in [1] and the third is in [2]. The experiments were run in the SPDZ framework. The data that we ran our experiments on were a combination of synthetic and real data sets. For each data set, the features were split evenly between two parties. The main points of consideration when running the algorithms was the precision of the results as well as the total runtime in the secure setting. 
+The experiments for each algorithm were run in the SPDZ framework. The data that we ran our experiments on were a combination of synthetic and real data sets. For each data set, the features were split evenly between two parties. The main points of consideration when running the algorithms was the precision of the results as well as the total runtime in the secure setting. \\
+
+\noindent
+Typically both parties were run on one machine but we also performed tests where both parties were deployed on different Amazon EC2 instances. It is important to note that the distribution of players across machine only affects runtime and not the accuracy of the results. 
 
 \subsection{Cholesky, LDLT, and CGD}
 
@@ -146,7 +394,7 @@ Additionally, we deployed two Amazon EC2 instances of the c4.8xlarge type and pe
 
 \subsection{Stochastic Gradient Descent}
 
-To implement SGD, we utilized the update function presented in [2]: $ w = w - \frac{1}{|B|} \alpha X^{T}_{B} \times (X_{B} \times w - Y_{B})$. The first dataset that we worked with was MNIST. However, per [2], we only trained and tested on the 0s and 1s in the dataset. From Figure 8, we can observe that 13 bits are sufficient enough to achieve almost perfect accuracy for prediction.
+To implement SGD, we utilized the update function presented in [2]: $ w = w - \frac{1}{|B|} \alpha X^{T}_{B} \times (X_{B} \times w - Y_{B})$. The first dataset that we worked with was MNIST, which contain 28 by 28 pixels of handwritten numbers and their corresponding labels. While the numbers in MNIST range from 0 to 9, [2] turned it into a binary problem by only using the handwritten 0 and 1s. The second dataset was Arcene which is also a two-class problem of cancer versus noncancerous spectrometric data. From Figure 8, we can observe that 13 bits are sufficient enough to achieve almost perfect accuracy for prediction.
 
 \begin{figure}[H]
 \centering
@@ -172,16 +420,16 @@ Auto MPG              & 0.56                              & 0.68 (+21.4\%)      
 Communities and Crime & 0.06                              & 0.17 (+183\%)                                   & 10.352                                 & 0.19 (+216\%)                                   & 12.363                                 \\
 Wine Quality          & 0.18                              & 0.19 (+5.55\%)                                  & 0.809                                  & 0.19 (+5.55\%)                                  & 0.969                                  \\
 Bike Sharing          & 0.23                              & 0.24 (+4.34\%)                                  & 0.910                                  & 0.25 (+8.69\%)                                  & 1.097                                  \\
+Blog Feedback   & 0.04                              & 0.04 (+0.0\%)                                   & 9.455                                  & 0.04 (+0.0\%)                                   & 9.091                                  \\
+CT Slices   & 0.22                              & 0.22 (+0.0\%)                                   & 16.458                                  & 0.22 (+0.0\%)                                   & 16.295                                  \\
 Year Prediction MSD   & 0.06                              & 0.06 (+0.0\%)                                   & 7.146                                  & 0.06 (+0.0\%)                                   & 8.513                                  \\
 Gas Sensor Array      & 0.20                              & 0.36 (+20.0\%)                                  & 1.151                                  & 0.36 (+20.0\%)                                  & 1.559                                  \\ \bottomrule
 \end{tabular}\\
-\caption{SGD Results for 7 open sourced UCI datasets.}
+\caption{SGD Results for 9 open sourced UCI datasets.}
 \end{table}
 
 \noindent
 Running the results in a secure setting increased the RMSE in quite a few of the datasets, however it is important to note that even the increase is still quite low for large data sets. In comparison to CGD and Cholesky results from [1], SGD had lower RMSE even when run in SPDZ. 
-
-\subsection{Analysis}
 
 \begin{table}[H]
 \centering
@@ -202,6 +450,59 @@ The run times for SPDZ are always comparable if not much faster. In terms of run
 
 \noindent
 The major takeaways are that increasing the size of the matrix and increasing the condition number results in higher errors. To get better results, we need to run more iterations of CGD. For high condition numbers in large matrices, Cholesky and LDLT outperform the other methods. However, CGD does well in low condition numbers. 
+
+\subsection{Logistic Regression}
+
+\noindent
+With logistic regression, the datasets that we looked at were MNIST and Arcene. In their experiments, they found that the new function outperformed a polynomial approximation of degree 10. We verify these results in SPDZ. The idea behind why this piecewise functions outperforms a polynomial approximation is in the tail behavior. From the results below, we observe that the new activation function is more stable than a polynomial approximation. For different 
+
+\begin{table}[H]
+\centering
+\label{my-label}
+\begin{tabular}{@{}lllllll@{}}
+\toprule
+       & Plaintext & New Activation function & \multicolumn{4}{l}{Polynomial Approximation} \\
+       &           &                         & degree 2  & degree 5  & degree 7 & degree 10 \\ \midrule
+MNIST  & 99.9\%    & 95\%                    & 97\%      & 85\%      & 91\%     & 99.5\%    \\
+Arcene & 72.0\%    &           44.0\%              &   44.0\%        &    44.5\%       &    65\%      &    72\%       \\ \bottomrule
+\end{tabular}
+\caption{Comparing the validation accuracy for different activation functions for logistic regression for a fixed train/test dataset using 32 bits (for 1 epoch and learning rate of 0.01)}
+\end{table}
+
+I'd like to note that in plaintext, using the new activation function, the accuracy is only 56\%. MNIST contains thousands of entries and from the SGD input. For Arcene, running more iterations would improve accuracy. For MNIST it would not. MNIST is 200 by 784 whereas Arcene is 200 by 10,000. This result was run for 20 bits of precision after the decimal. For MNIST, you don't have to train on entire dataset... (and SPDZ will overflow/seg fault if try to feed the thousands in..)
+
+\begin{table}[H]
+\centering
+\label{my-label}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+                        & \multicolumn{2}{c}{MNIST} & \multicolumn{2}{c}{Arcene} \\ \midrule
+                        & Compile      & Run        & Compile      & Run         \\
+New Activation Function & 26.01        & 18.8       & 220.14       & 224.47      \\
+2 Polynomial            & 27.79        & 19.28      & 222.85       & 239.98      \\
+5 Polynomial            & 30.32        & 19.8       & 225.33       & 241.59      \\
+7 Polynomial            & 31.99        & 20.65      & 228.33       & 239.11      \\
+10 Polynomial           & 34.24        & 20.71      & 230.81       & 240.79      \\ \bottomrule
+\end{tabular}
+\caption{The runtimes for the results in table 2}
+\end{table}
+
+Choosing the best results from Table 2, we selected the degree 10 polynomial approximation for both the MNIST and Arcene datasets. 
+
+\vc{another idea for results: do the same thing with varying bits and iterations.. }
+
+\begin{figure}[H]
+\centering
+  \includegraphics[scale=0.6]{mnistarcene.png}
+  \caption{REPLACE THIS.}
+  \label{fig:result4}
+\end{figure}
+
+\subsection{Neural Networks}
+
+\section{Conclusion and Future Work}
+
+Not sure what to write here..
 
 \section{References}
 
