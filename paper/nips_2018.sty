@@ -308,12 +308,14 @@
     {\LARGE\bf \@title\par}
     \@bottomtitlebar
     \if@submission
+      \iffalse
       \begin{tabular}[t]{c}\bf\rule{\z@}{24\p@}
         Anonymous Author(s) \\
         Affiliation \\
         Address \\
         \texttt{email} \\
       \end{tabular}%
+      \fi
     \else
       \def\And{%
         \end{tabular}\hfil\linebreak[0]\hfil%

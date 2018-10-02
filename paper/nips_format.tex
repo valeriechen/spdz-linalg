@@ -10,10 +10,10 @@
 
 % to compile a preprint version, e.g., for submission to arXiv, add
 % add the [preprint] option:
- %\usepackage[preprint]{nips_2018}
+% \usepackage[preprint]{nips_2018}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
-% \usepackage[final]{nips_2018}
+ %\usepackage[final]{nips_2018}
 
 % to avoid loading the natbib package, add option nonatbib:
 % \usepackage[nonatbib]{nips_2018}
@@ -44,6 +44,8 @@
 % on the second line, try using \AND instead of \And before the third
 % author name.
 
+\author{}
+\iffalse
 \author{
   Valerie Chen\\
   Yale University\\
@@ -75,11 +77,12 @@
   %% Address \\
   %% \texttt{email} \\
 }
+\fi
 
 \begin{document}
 
 \maketitle
-
+%\vspace{}
 \begin{abstract}
   Secure Multi-Party Computation (MPC) is an area of theoretical cryptography research that has the power to revolutionize computation between shared parties holding private data. However theoretical protocols are often not scalable and efficient given large quantities of real world data. This project investigates an MPC protocol called SPDZ secure against malicious adversaries in comparison to two other semi-honest MPC protocols Obliv-C and SecureML in machine learning and regression applications. We demonstrate its potential to be used in real world applications with experiments to show that it outperforms the other two methods while maintaining a more rigorous level of security.
 \end{abstract}
