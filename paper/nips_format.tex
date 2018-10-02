@@ -6,11 +6,11 @@
 % before loading nips_2018
 
 % ready for submission
-%\usepackage{nips_2018}
+\usepackage{nips_2018}
 
 % to compile a preprint version, e.g., for submission to arXiv, add
 % add the [preprint] option:
- \usepackage[preprint]{nips_2018}
+ %\usepackage[preprint]{nips_2018}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
 % \usepackage[final]{nips_2018}
@@ -46,14 +46,16 @@
 
 \author{
   Valerie Chen\\
-  Department of Computer Science\\
   Yale University\\
   %% Address?? \\
   \texttt{v.chen@yale.edu} \\
+  \And
+  Valerio Pastro\\
+  Yale University\\
+  \textt{valerio.pastro@yale.edu}\\
   %% examples of more authors
   \And
   Mariana Raykova \\
-  Department of Computer Science\\
   Yale University \\
   %% Address?? \\
   \texttt{mariana.raykova@yale.edu} \\
@@ -104,13 +106,8 @@ Our goal was to conduct a thorough investigation of the SPDZ framework in the ap
 
 LDLT and Cholesky are both variants of direct decomposition methods which decompose a Hermitian, positive-definite matrix into a lower triangular matrix and its conjugate transpose. The algorithms are cubic in complexity with asymptotic run time of $O(d^3)$. This can become difficult to work with when looking at real world data that has large number of features and entries. The difference between LDLT and Cholesky is that Cholesky requires a square root. We looked at two different methods to approximate the square root function in SPDZ. The Babylonian method involves iteratively dividing and averaging an initial guess so on the next iteration can be represented as $x_{n+1} = \frac{1}{2} (x_{n} + \frac{S}{x_{n}})$. The Newton Method is similar but finds the square root using multiplications and not divisions: $\sqrt{S} = S \cdot (1/\sqrt{S})$.
 
-In terms of an iterative approach to regression, [1] proposed a modification for the normalization in the iterative version of CGD that would be more stable with fixed-point numbers, which is detailed here:
+In terms of an iterative approach to regression, [1] proposed a modification for the normalization in the iterative version of CGD that would be more stable with fixed-point numbers. 
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.45]{cgd_alg}
-  \caption{Iterative fixed-point algorithm for CGD}
-\end{figure}
 We applied the same algorithm to SPDZ to see if the same modification would work. The goal of comparing iterative versus a direct method would be to justify the potential accuracy trade off for a much smaller run time.
 
 \subsection{Gradient Descent}
@@ -199,10 +196,6 @@ d=500                                                                  & 527    
 \end{table}
 
 Through this work, we demonstrated that SPDZ outperforms other protocols Obliv-C and SecureML in terms of accuracy, as evidenced in Table FILL, efficiency, and security. In future work, we plan to expand the selected algorithms beyond linear and logistic regression to include neural networks and deep neural networks. This investigation into the applicability of secure MPC on real world data demonstrates its potential change the way data is used in a variety of applications in today\textquotesingle s world.
-
-\subsubsection*{Acknowledgments}
-
-Who to put here / how long should this be / does this count in page limit?
 
 \section*{References}
 
