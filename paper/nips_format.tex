@@ -81,49 +81,98 @@
 \maketitle
 
 \begin{abstract}
-Secure Multi-Party Computation (MPC) is an area of cryptography research that has the power to revolutionize computation between shared parties holding private data. However, theoretical protocols are often not scalable and inefficient when given large quantities of real world data. This project investigates an MPC protocol called SPDZ, which is secure against malicious adversaries, in comparison to two other semi-honest MPC protocols Obliv-C and SecureML in machine learning and regression applications. We demonstrate its potential to be used in real world applications with experiments to show that it outperforms the other two methods while maintaining a more rigorous level of security.
+Secure Multi-Party Computation (MPC) is an area of cryptography, which enables the computation on sensitive data from multiple sources while maintaining privacy guarantees.
+However, theoretical protocols often do not scalable efficiently to real world size data. This project investigates the efficiency of of the SPDZ framework~\cite{SPDZ12}, which provides implementation
+of MPC protocols with malicious security, in the context of popular machine learning (ML) algorithms. In particular, we choose applications such as linear regression and logistic regression,
+which have been implemented and evaluated using semi-honest MPC techniques~\cite{GSB0DZE17, MZ17}. We demonstrate that the SPDZ framework outperforms these previous implementations while providing stronger security.
 \end{abstract}
+
 
 \section{Introduction}
 
-Regression analysis and other machine learning techniques aim to build a model that fits a set of predictors to a dependent variable. With the advent of big data, it is becoming increasingly common for entities to store vast amounts of user data, run regression analyses and build models of this data to gain insights. A desired use case is computation on joint data from different private sources. For example, the Center for Disease Control is interested in identifying disease outbreak and many individual hospitals have their own patient data which could benefit this study. The problem is that openly sharing this data for prediction or model-building purposes would be against modern day privacy laws as it would leak private individual data [2]. This application of secure MPC is one that would be extremely valuable in today\textquotesingle s world.
+Many machine learning techniques, including regression analysis, aim to build a model that fits a set of predictors to a dependent variable. Such techniques are widely used to model and analyze big data.
+In many settings, however, the input data for such ML analysis tools is partitioned among different parties, which have strict privacy policies. For example, the Center for Disease Control is interested in identifying disease outbreak and many individual hospitals have their own patients' data which could benefit this study. The problem is that openly sharing this data for prediction or model-building purposes would be against modern day privacy laws as it would leak private individual data. This is one of many examples, which could benefit of the functionality that allows to evaluate to output of the analysis without revealing more about the private inputs.
+%This application of secure MPC is one that would be extremely valuable in today\textquotesingle s world.
 
 \subsection{Multi-Party Computation}
 
-Secure MPC addresses this problem by providing a mechanism through which different parties run jointly run a protocol on each of their private data for joint computation without revealing individual values or even intermediate values from each database and without the need for a trusted third party. This need for MPC motivates our study to bridge theory and application through experiments on real-world data. 
+Secure MPC addresses the above problem by providing a mechanism through which different parties can run a joint computation over their private inputs with guarantees that the only thing
+revealed about the inputs, is the output of the computation and whatever can be inherently inferred from it.
+There are two main types of MPC protocols in terms of their security guarantees: semi-honest and malicious protocols \cite{Goldreich:2004:FCV:975541, cryptoeprint:2010:551}. In semi-honest security, it is assumed that the parties will follow the protocol as specified, but they can try to infer information about the input from the protocol messages. In malicious security, dishonest parties may attempt to deviate from the specified protocol, and the protocol must guarantee that these parties cannot learn about the inputs. Since malicious protocols have to satisfy stronger guarantees in general such construction are less efficient than semi-honest protocols.
 
-In general, MPC protocols come in two forms: security against semi-honest [6] and malicious adversaries [5]. In semi-honest security, it is assumed that the party will follow the protocol as specified, but will merely gather information about intermediate values. Semi-honest security is more efficient on computation as it has fewer requirements than malicious security. In malicious security, dishonest parties may attempt to deviate from the specified protocol, and the protocol must be able to detect such cheating and abort the computation - thus any successful output is guaranteed to have privacy preserved. This notion can be rigorously proved.
+Two recent works~\cite{GSB0DZE17, MZ17} propose efficient implementation for several central building blocks for machine learning such as conjugate gradient decent (CGD) and stochastic gradient descent (SGD) as well as applications  using them such as linear and logistic regression.  The work of Gascon et al.~\cite{GSB0DZE17} uses the framework for semi-honest computation Obliv-C~\cite{cryptoeprint:2015:1153} and proposes
+several different methods for solving systems of linear equations. Their main premise is to use an iterative method such as CGD and show trade-offs that save a lot of computation and hence efficiency for the MPC in
+return for a small accuracy loss. They further propose a modification of CGD that has stable behavior using fix-point arithmetic since emulating floating point with the underlying MPC representation introduces substantial
+efficiency overhead.
 
+The work of Mohassel and Zhang~\cite{MZ17} considers stochastic gradient descent as a method for learning linear regression and logistic regression by using different activation functions. The authors consider
+arithmetic representation for the computation and propose new secure computation techniques for matrix computation, which generalize the approach for generating multiplicative triples in a preprocessing step.
+ Similarly to the work of Gascon et al.~\cite{GSB0DZE17}, this paper considers techniques for approximation that save computation, for example, using a piece-wise approximation for the logistic function. The author
+ also propose new techniques for more efficient approximate computation of fixed-point encodings.
+
+The techniques in both of the above works are restricted to the setting of two party computation. We choose the SPDZ~\cite{SPDZ12,KSS13,KPR18} framework for our implementations since it is one of the main and most comprehensive 
+implementations for multiparty computation protocols, which provide malicious security and support more than two parties.
+
+\iffalse
 For this study, we chose the SPDZ framework [1,6], which ensures against malicious security, and compare against two semi-honest methods Obliv-C [10] and SecureML [8]. The SPDZ protocol is comprised of an efficient preprocessing offline phase using semi-homomorphic encryption and an optimized secret-sharing online phase that computes an arithmetic circuit. Obliv-C is based on Yao\textquotesingle s garbled circuits and Gascon et al.[4]  introduces optimizations on inner products and algorithmic modifications to speed up regression calculation. SecureML developed MPC-friendly alternatives to non-linear activation functions which are often intensive to compute as well as vectorization techniques in a shared setting. 
 
 Secure computation is slower and could have lower accuracy when compared to the same computation in plaintext. Thus trade-offs need to be made in terms of the accuracy and the complexity of the algorithm, which will affect the MPC efficiency.
+\fi
+
 
 \section{ML Functionalities}
 
-Our goal was to evaluate and compare the performance of SPDZ against other frameworks in the context of ML applications that have been previously considered in [4,8], evaluating in terms of runtime and accuracy. The main algorithms that we considered were: LDLT Decomposition, Cholesky, Conjugate Gradient Descent (CGD), Stochastic Gradient Descent (SGD), Logistic Regression. These are classic algorithms that can be found in standard machine textbooks (e.g., [3]). In our evaluation, the algorithms were implemented in the SPDZ framework as well as in python as a plaintext verification of the algorithm.
+%Our goal was to evaluate and compare the performance of SPDZ against other frameworks in the context of ML applications that have been previously considered in [4,8], evaluating in terms of runtime and accuracy. 
+For our implementation we consider the same algorithms and functionalities as in the above two papers. Next we provide a brief overview of these classic algorithms (details can be found in ~\cite{HTF09}).
 
-\subsection{Direct vs. Iterative Decomposition}
+%The main algorithms that we considered were: LDLT Decomposition, Cholesky, Conjugate Gradient Descent (CGD), Stochastic Gradient Descent (SGD), Logistic Regression. These are classic algorithms that can be found in standard machine textbooks (e.g., [3]). 
 
-LDLT and Cholesky are both variants of direct decomposition methods which decompose a Hermitian, positive-definite matrix into a lower triangular matrix and its conjugate transpose. The algorithms are cubic in complexity with asymptotic run time of $O(d^3)$, where $d$ is the dimension of the input matrix. This runtime can become inefficient when considering real world data that have large number of features and entries. The difference between LDLT and Cholesky is that Cholesky requires a square root. In MPC, non-linear functions like square roots are difficult to represent due to the linear nature of secret sharing schemes. Thus, we looked at an iterative Newton method as a way of approximating the square root in SPDZ to solve for $x_i$, where $x_{i}^2 = S$:
+%In our evaluation, the algorithms were implemented in the SPDZ framework as well as in python as a plaintext verification of the algorithm.
+
+\subsection{Direct vs. Iterative Decomposition for Solving a Linear System}
+
+Solving a system of linear equations, which underlies linear regression learning, can be done using techniques for direct and indirect decomposition.
+LDLT and Cholesky are both variants of direct decomposition methods which decompose a Hermitian, positive-definite matrix into a lower triangular matrix and its conjugate transpose. The algorithms are cubic in complexity with asymptotic run time of $O(d^3)$, where $d$ is the dimension of the input matrix. 
+%This runtime can become inefficient when considering real world data that have large number of features and entries. 
+The difference between LDLT and Cholesky is that Cholesky requires a square root. The representation of square root computation as an arithmetic circuit used in the MPC computation in SPDZ introduces 
+considerable overhear. That is why we used the iterative Newton method as a way of approximating the square root computation. It computes $x_i$, where $x_{i}^2 = S$, with repetition of the following
+update function $x_{n+1} =1/2 (x_{n} + S/x_{n})$.
+
+\iffalse
+In MPC, non-linear functions like square roots are difficult to represent due to the linear nature of secret sharing schemes. Thus, we looked at an iterative Newton method as a way of approximating the square root in SPDZ to solve for $x_i$, where $x_{i}^2 = S$:
 
 \[
 x_{n+1} = \frac{1}{2} (x_{n} + \frac{S}{x_{n}})
 \]
+\fi
 
-In terms of an iterative approach to regression, Gascon et al.[4] proposed a modification for the normalization in the iterative version of CGD that would be more stable with fixed-point numbers. We applied the same algorithm to SPDZ to see if the same modification would work. The goal of comparing iterative versus a direct method would be to justify the potential accuracy trade off for a much smaller run time.
+In terms of an iterative approach to regression, we used the approach proposed by
+Gascon et al.~\cite{GSB0DZE17}, which uses a normalized version of CGD that preserves stability and convergence rate with fixed-point number representation. Similarly to other MPC implementations
+using floating point representation in SPDZ introduces substantial efficiency overhead. 
 
-\subsection{Gradient Descent}
+%proposed a modification for the normalization in the iterative version of CGD that would be more stable with fixed-point numbers. We applied the same algorithm to SPDZ to see if the same modification would work. The goal of comparing iterative versus a direct method would be to justify the potential accuracy trade off for a much smaller run time.
 
-Stochastic gradient descent is an iterative approximation method that converges to the global minimum for convex problems, like linear regression. It is also a driving mechanism for non-convex problems like neural networks. In a linear regression setting, we update the learned weights $w$, given learning rate $\alpha$ and input matrix $x$ and expected output $y$, using $w_j = w_j  - \alpha(x_i \cdot w *-y_i)x_{ij}$ [8]. In this update function, the weights are adjusted element-wise by the error from the predicted and expected value at a rate determined by $\alpha$.
+\subsection{Stochastic Gradient Descent}
+
+Stochastic gradient descent is an iterative approximation method that converges to the global minimum for convex problems, like linear and logistic regression. It is also a driving mechanism for non-convex problems like neural networks. An SGD iteration updates a weight vector $\mathbf{w}$ using a randomly selected sample from the training input as follows: $w_j := w_j - \alpha ({\partial C_i(\mathbf{w})}/{\partial w_j})$ with learning rate $\alpha$. In this update $C_i$ is the cost function, which can be instantiated with different concrete functions to obtain computation for linear regression and logistic regression. A common technique for SGD
+computation is called \emph{mini-batch} -- instead of selecting one sample per iteration, a small batch of size $B$ samples are selected and the update function is performed averaging the partial derivatives across all samples. We use the mini-batch SGD in our implementation to obtain accuracy benefits. While the work of Mohassel and Zhang~\cite{MZ17} has optimizations for matrix computation, which can be used with mini-batch, for 
+SPDZ this does not lead to additional savings.
+ 
+
+\iffalse
+In a linear regression setting, we update the learned weights $w$, given learning rate $\alpha$ and input matrix $x$ and expected output $y$, using $w_j = w_j  - \alpha(x_i \cdot w *-y_i)x_{ij}$ [8]. In this update function, the weights are adjusted element-wise by the error from the predicted and expected value at a rate determined by $\alpha$.
 
 Instead of selecting one sample per iteration, a small batch of size $B$ samples are selected and the update function is performed collectively. We implemented this modification called mini-batch SGD so the weights would converge more quickly and in smoother fashion to the minimum. Since SPDZ does not support vectorization (e.g. in python), where operations are broadcasted to entire array, we were not able to take advantage of the time speed-ups. However we were still able to take advantage of the accuracy benefit. The algorithm for the batched version is modified as such, where $w$ are the weights, $\alpha$ the learning rate, $X_{B}$ the batched input, and $Y_{B}$ the corresponding expected batched output: 
 \[
  w = w - \frac{1}{|B|} \alpha X^{T}_{B} \times (X_{B} \times w - Y_{B})
 \]
+\fi
 
-\subsubsection{Non-Linear Activations}
+\subsubsection{Linear and Non-Linear Activation Functions}
 
-Logistic regression is a classification algorithm for modeling a binary dependent variable. Logistic regression fits the logistic function $f(u) = \frac{1}{1+e^-u}$ to the input. Using the cross entropy function, we can derive an update function for mini-batched SGD in a similar form to linear regression: $ w = w - \frac{1}{|B|} \alpha X^{T}_{B} \times f(X_{B} \times w - Y_{B})$, where $f$ maps the predicted value into the binary output space. To approximate this function. $f$, Mohassel and Zhang [8] proposed this following piecewise function:
+To obtain a solution for linear regression using SGD, we instantiate the cost function as $w_j = w_j  - \alpha(X_i \cdot w *-y_i)X_{ij}$, where $X$ is the input matrix and $y$ is the input vector. In this update function, the weights are adjusted element-wise by the error from the predicted and expected value at a rate determined by $\alpha$.
+
+Logistic regression is a classification algorithm for modeling a binary dependent variable. Logistic regression fits the logistic function $f(u) = \frac{1}{1+e^-u}$ to the input. The corresponding update function for mini-batched SGD for logistic regression is $ w = w - \frac{1}{|B|} \alpha X^{T}_{B} \times f(X_{B} \times w - Y_{B})$, where $f$ maps the predicted value into the binary output space. Mohassel and Zhang [8] proposed the following piecewise function as approximation for $f$:
 
 \[
   f(u) =
@@ -140,38 +189,43 @@ We compare the results of this MPC-friendly piecewise function to a more standar
 
 \subsection{Experimental Setup}
 
-The main metrics of evaluations were the latency in computation in a privacy-preserving setting and the error in accuracy, to see what trade-offs and modifications should be made to achieve good accuracy while optimizing efficiency. We varied the precision after the decimal point (32 and 64 bits) or less depending on the comparison.
+For our evaluation, we implemented all algorithms both in the SPDZ framework as well as in python as a plaintext verification of the algorithm.
+The main metrics of evaluations were the latency of the MPC computation and the accuracy error, and we aimed to explore the trade-offs between accuracy and efficiency. We varied the precision after the decimal point 
+depending on what was used in the works that we compared against (32 and 64 bits for the linear regression, less for SGD).
 
-We evaluated our methods on both real-world datasets (MNIST, Arcene, and 9 other UCI open-source datasets) as well as synthetically generated data. These real-world datasets allow us to compare the accuracy results to existing works and to demonstrate that SPDZ can be used in practical settings. However, the advantage to using synthetic data is being able to control characteristics of the data like the dimensions ($d$ = 10, 20, 50, 100, 200, 500), condition number ($cd$ = [1,10]), and number of examples ($n$ = 1000, 100000).
+We evaluated our methods on both real-world datasets (MNIST, Arcene, and 9 other UCI open-source datasets) as well as synthetically generated data. These real-world datasets allow us to compare the accuracy results to existing works and to demonstrate that SPDZ can be used in practical settings. We used synthetic data in order to explore larger ranges of data characteristics such as dimension ($d$ = 10, 20, 50, 100, 200, 500), condition number ($cd$ = [1,10]), and number of examples ($n$ = 1000, 100000).
 
-In our experiments, both parties were mostly run on one machine to simplify the procedure, but we also performed tests where both parties were deployed on separate Amazon EC2 m4.large instances. It is important to note that the distribution of players across machine only affects runtime and not the accuracy of the results. We also looked at up to four parties as a form of validation of the SPDZ protocol.
+Most of our experiments were ran using machines on the same local area network where there is no network latency. We performed tests where both parties were deployed on separate Amazon EC2 m4.large instances.
+We also ran experiment with up to four parties.
+
+%In our experiments, both parties were mostly run on one machine to simplify the procedure, but we also performed tests where both parties were deployed on separate Amazon EC2 m4.large instances. It is important to note that the distribution of players across machine only affects runtime and not the accuracy of the results. We also looked at up to four parties as a form of validation of the SPDZ protocol.
 
 \subsection{Results}
 
-This section presents empirical results for real-world and synthetic data evaluated on the SPDZ protocol, comparing the five different algorithms in terms of accuracy and run time for various parameters. 
+In this section we present empirical results for our SPDZ implementations evaluated with real and synthetic databases. We compare the five different algorithms in terms of accuracy and run time for various parameters. 
 
 \begin{figure}[h!]
 \centering
   \includegraphics[scale=0.4]{allregression.png}
-  \label{fig:result4}
     \caption{(Left) Run time as a function of input dimension. (Middle) Condition number as a function of accuracy. (Right) Accuracy as a function of the input dimension. (Top) Fixed-point with 60 bits of precision. (Bottom) Fixed-point with 28 bits of precision}
+   \label{fig:result1}   
 \end{figure}
 
-For LDLT, Cholesky and various iterations of CGD, we evaluated on synthetically generated data of varying sizes and condition numbers. The larger the condition number, the larger the error in approximations of the solution. The direct decomposition methods grew exponentially in run time as input size increases, which is shown in the left column of Figure 1, which means that it is not suitable for large size real data. Alternatively, the iterative CGD runtime increases at a much slower rate. In the middle column of Figure 2, we find that about 20 iterations is sufficient to reach maximum accuracy given the number of allocated bits even with varying condition numbers, meaning the data might not be as well-formed. Particularly for the 64-bit case, shown on the bottom right, the accuracy is identical for CGD after 15 iterations and Cholesky/LDLT.
+For LDLT, Cholesky and various iterations of CGD, we evaluated on synthetically generated data of varying sizes and condition numbers. The larger the condition number is, the larger the error in approximations of the solution is. The direct decomposition methods grew exponentially in run time as input size increases, which is shown in the left column of Figure~\ref{fig:result1} -- this unlikely to be suitable for large size real data. Alternatively, the iterative CGD runtime increases at a much slower rate. In the middle column of Figure 2, we find that about 20 iterations are sufficient to reach maximum accuracy given the number of allocated bits even with varying condition numbers, meaning the data might not be as well-formed. Particularly for the 64-bit case, shown on the bottom right, the accuracy is identical for CGD after 15 iterations and Cholesky/LDLT.
 
 \begin{figure}[h!]
 \vspace{-4mm}
 \centering
   \includegraphics[scale=0.6]{mnistarcene.png}
-  \label{fig:result4}
   \vspace{-4mm}
    \caption{Comparing accuracy of privacy preserving linear regression with various fixed point precisions and plaintext training on floating point for MNIST (left) and Arcene (right).}
-   \vspace{-4mm}
+   %\vspace{-4mm}
+   \label{fig:result2}  
 \end{figure}
 
-Figure 2, which compares SGD on MNIST and Arcene results, demonstrates that the number of bits of precision needed to get good accuracy is highly dependent on the dataset. For MNIST, 13 bits was sufficient to match plaintext accuracy but 28 bits were needed for Arcene. The MNIST data contains only 784 features while there are 10,000 in the Arcene data, 3,000 of which are considered "probes" with no predictive power, which could explain the lower overall accuracy [8]. While the numbers in the MNIST data ranged from 0 to 9, Mohassel and Zhang [8] only used 0s and 1s labels from the dataset, reducing it to a binary problem. We replicated this approach and present the results below. We did run the computation to predict all 10 digits, but found that SGD only achieved a much lower accuracy of about 19\%. We also compared the root mean squared error (RMSE) of SGD on 9 UCI open-sourced datasets of ranging sizes to results in [3]. Our results in the SPDZ secure settings typically increased RMSE by about $5-20\%$ compared to plaintext computation, but still outperformed RMSE results from [3] in both CGD and SGD.
+Figure~\ref{fig:result2} compares SGD on MNIST and Arcene results. It shows that the number of bits of precision needed to get good accuracy is highly dependent on the dataset. For MNIST, 13 bits was sufficient to match plaintext accuracy but 28 bits were needed for Arcene. The MNIST data contains only 784 features while there are 10,000 in the Arcene data, 3,000 of which are considered "probes" with no predictive power, which could explain the lower overall accuracy [8]. While the numbers in the MNIST data ranged from 0 to 9, Mohassel and Zhang~\cite{MZ17} only used 0s and 1s labels from the dataset, reducing it to a binary problem. We replicated this approach and present the results below. We did run the computation to predict all 10 digits, but found that SGD only achieved a much lower accuracy of about 19\%. We also compared the root mean squared error (RMSE) of SGD on 9 UCI open-sourced datasets of ranging sizes to results in [3]. Our results in the SPDZ secure setting typically increased RMSE by about $5-20\%$ compared to plaintext computation, but still outperformed RMSE results from [3] in both CGD and SGD.
 
-In terms of logistic regression, for SPDZ, we did not find that the new activation function was a better alternative to taking a Taylor Series approximation for the exponential function as shown in Table 1. We found that for SPDZ, which is based on arithmetic circuits, the extra time to take a few extra degrees in the approximation was negligible.  
+In terms of logistic regression, for SPDZ, we did not find that the new activation function was a better alternative to taking a Taylor Series approximation for the exponential function as shown in Table~\ref{tbl1}. We found that for SPDZ, which is based on arithmetic circuits, the extra time to take a few extra degrees in the approximation was negligible.  
 
 \begin{table}[h!] 
 \caption{Comparing the validation accuracy for different activation functions for logistic regression.}
@@ -185,13 +239,19 @@ MNIST  & 99.9\%    & 95\%                    & 97\%      & 85\%      & 91\%     
 Arcene & 72.0\%    &           44.0\%              &   44.0\%        &    44.5\%       &    65\%      &    72\%       \\ \bottomrule
 \end{tabular}
 \vspace{-4mm}
+\label{tbl1}
 \end{table}
 
 \subsection{Conclusion}
 
-When comparing runtimes, we found that SPDZ outperformed Obliv-C even in a distributed machine setting by an order of magnitude and comparable results to SecureML in SGD and Logistic Regression. The accuracy findings were comparable for LDLT, Cholesky, and CGD results for SPDZ and Obliv-C, but we found that SPDZ outperformed Obliv-C on SGD. SPDZ was able to match SecureML results on SGD and Logistic Regression.
+We found that the SPDZ outperformed Obliv-C even in a distributed machine setting by an order of magnitude and achieves comparable results to SecureML for SGD instantiations such as Linear and Logistic Regression. The accuracy findings were comparable for LDLT, Cholesky, and CGD results for SPDZ and Obliv-C, but we found that SPDZ outperformed Obliv-C on SGD. SPDZ was able to match SecureML results on SGD and Logistic Regression.
 
-\section*{References}
+%\section*{References}
+
+\bibliographystyle{plain}
+\bibliography{refs}
+
+\iffalse
 
 \small
 
@@ -214,6 +274,8 @@ When comparing runtimes, we found that SPDZ outperformed Obliv-C even in a distr
 [9] Phung, D., Tseng, V. S., Webb, G. I., Ho, B., Ganji, M., \& Rashidi, L. (Eds.). (2018). Advances in Knowledge Discovery and Data Mining: 22nd Pacific-Asia Conference, PAKDD 2018, Melbourne, VIC, Australia, June 3-6, 2018, Proceedings (Vol. 10938). Springer.
 
 [10] Zahur, S., \& Evans, D. (2015). Obliv-C: A Language for Extensible Data-Oblivious Computation. {\it IACR Cryptology ePrint Archive, 2015}, 1153.
+
+\fi
 
 \end{document}
 
