@@ -32,7 +32,7 @@
 \usepackage{multirow}
 \usepackage{multicol,color}
 
-\title{Experimental Secure Multi-Party Computation on Real Data using SPDZ}
+\title{Secure Computation for Machine Learning With SPDZ}
 
 % The \author macro works with any number of authors. There are two
 % commands used to separate the names and addresses of multiple
@@ -211,7 +211,7 @@ In this section we present empirical results for our SPDZ implementations evalua
    \label{fig:result1}   
 \end{figure}
 
-For LDLT, Cholesky and various iterations of CGD, we evaluated on synthetically generated data of varying sizes and condition numbers. The larger the condition number is, the larger the error in approximations of the solution is. The direct decomposition methods grew exponentially in run time as input size increases, which is shown in the left column of Figure~\ref{fig:result1} -- this unlikely to be suitable for large size real data. Alternatively, the iterative CGD runtime increases at a much slower rate. In the middle column of Figure 2, we find that about 20 iterations are sufficient to reach maximum accuracy given the number of allocated bits even with varying condition numbers, meaning the data might not be as well-formed. Particularly for the 64-bit case, shown on the bottom right, the accuracy is identical for CGD after 15 iterations and Cholesky/LDLT.
+For LDLT, Cholesky and various iterations of CGD, we evaluated on synthetically generated data of varying sizes and condition numbers. The larger the condition number is, the larger the error in approximations of the solution is. The direct decomposition methods grew exponentially in run time as input size increases, which is shown in the left column of Figure~\ref{fig:result1} -- this unlikely to be suitable for large size real data. Alternatively, the iterative CGD runtime increases at a much slower rate. In the middle column of Figure 2, we find that about 20 iterations are sufficient to reach maximum accuracy given the number of allocated bits even with varying condition numbers. Particularly for the 64-bit case, shown on the bottom right, the accuracy is identical for CGD after 15 iterations and Cholesky/LDLT.
 
 \begin{figure}[h!]
 \vspace{-4mm}
@@ -223,7 +223,7 @@ For LDLT, Cholesky and various iterations of CGD, we evaluated on synthetically 
    \label{fig:result2}  
 \end{figure}
 
-Figure~\ref{fig:result2} compares SGD on MNIST and Arcene results. It shows that the number of bits of precision needed to get good accuracy is highly dependent on the dataset. For MNIST, 13 bits was sufficient to match plaintext accuracy but 28 bits were needed for Arcene. The MNIST data contains only 784 features while there are 10,000 in the Arcene data, 3,000 of which are considered "probes" with no predictive power, which could explain the lower overall accuracy [8]. While the numbers in the MNIST data ranged from 0 to 9, Mohassel and Zhang~\cite{MZ17} only used 0s and 1s labels from the dataset, reducing it to a binary problem. We replicated this approach and present the results below. We did run the computation to predict all 10 digits, but found that SGD only achieved a much lower accuracy of about 19\%. We also compared the root mean squared error (RMSE) of SGD on 9 UCI open-sourced datasets of ranging sizes to results in [3]. Our results in the SPDZ secure setting typically increased RMSE by about $5-20\%$ compared to plaintext computation, but still outperformed RMSE results from [3] in both CGD and SGD.
+Figure~\ref{fig:result2} compares SGD on MNIST and Arcene results. It shows that the number of bits of precision needed to get good accuracy is highly dependent on the dataset. For MNIST, 13 bits was sufficient to match plaintext accuracy but 28 bits were needed for Arcene. The MNIST data contains only 784 features while there are 10,000 in the Arcene data, 3,000 of which are considered "probes" with no predictive power, which could explain the lower overall accuracy of \cite{MZ17}. While the numbers in the MNIST data ranged from 0 to 9, Mohassel and Zhang~\cite{MZ17} only used 0s and 1s labels from the dataset, reducing it to a binary problem. We replicated this approach and present the results below. We did run the computation to predict all 10 digits, but found that SGD only achieved a much lower accuracy of about 19\%. We also compared the root mean squared error (RMSE) of SGD on 9 UCI open-sourced datasets of ranging sizes to results in \cite{GSB0DZE17}. Our results in the SPDZ secure setting typically increased RMSE by about $5-20\%$ compared to plaintext computation, but still outperformed RMSE results from \cite{GSB0DZE17} in both CGD and SGD.
 
 In terms of logistic regression, for SPDZ, we did not find that the new activation function was a better alternative to taking a Taylor Series approximation for the exponential function as shown in Table~\ref{tbl1}. We found that for SPDZ, which is based on arithmetic circuits, the extra time to take a few extra degrees in the approximation was negligible.  
 
