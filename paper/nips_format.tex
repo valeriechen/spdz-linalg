@@ -81,9 +81,9 @@
 \maketitle
 
 \begin{abstract}
-Secure Multi-Party Computation (MPC) is an area of cryptography, which enables the computation on sensitive data from multiple sources while maintaining privacy guarantees.
-However, theoretical protocols often do not scalable efficiently to real world size data. This project investigates the efficiency of of the SPDZ framework~\cite{SPDZ12}, which provides implementation
-of MPC protocols with malicious security, in the context of popular machine learning (ML) algorithms. In particular, we choose applications such as linear regression and logistic regression,
+Secure Multi-Party Computation (MPC) is an area of cryptography that enables the computation on sensitive data from multiple sources while maintaining privacy guarantees.
+However, theoretical MPC protocols often do not scale efficiently to real-world data. This project investigates the efficiency of of the SPDZ framework~\cite{SPDZ12}, which provides an implementation
+of an MPC protocol with malicious security, in the context of popular machine learning (ML) algorithms. In particular, we chose applications such as linear regression and logistic regression,
 which have been implemented and evaluated using semi-honest MPC techniques~\cite{GSB0DZE17, MZ17}. We demonstrate that the SPDZ framework outperforms these previous implementations while providing stronger security.
 \end{abstract}
 
@@ -91,26 +91,26 @@ which have been implemented and evaluated using semi-honest MPC techniques~\cite
 \section{Introduction}
 
 Many machine learning techniques, including regression analysis, aim to build a model that fits a set of predictors to a dependent variable. Such techniques are widely used to model and analyze big data.
-In many settings, however, the input data for such ML analysis tools is partitioned among different parties, which have strict privacy policies. For example, the Center for Disease Control is interested in identifying disease outbreak and many individual hospitals have their own patients' data which could benefit this study. The problem is that openly sharing this data for prediction or model-building purposes would be against modern day privacy laws as it would leak private individual data. This is one of many examples, which could benefit of the functionality that allows to evaluate to output of the analysis without revealing more about the private inputs.
+In many settings, however, the input data for such ML analysis tools is partitioned among different parties, which have strict privacy policies. For example, if the Center for Disease Control is interested in identifying disease outbreak, they might want to incorporate patient data from many individual hospitals. The problem is that openly sharing this data for prediction or model-building purposes is against modern day privacy laws as it would leak private individual data. This is one of many examples, which could benefit from MPC which would allow the parties to evaluate the output of the analysis without revealing more about the private inputs.
 %This application of secure MPC is one that would be extremely valuable in today\textquotesingle s world.
 
 \subsection{Multi-Party Computation}
 
 Secure MPC addresses the above problem by providing a mechanism through which different parties can run a joint computation over their private inputs with guarantees that the only thing
-revealed about the inputs, is the output of the computation and whatever can be inherently inferred from it.
-There are two main types of MPC protocols in terms of their security guarantees: semi-honest and malicious protocols \cite{Goldreich:2004:FCV:975541, cryptoeprint:2010:551}. In semi-honest security, it is assumed that the parties will follow the protocol as specified, but they can try to infer information about the input from the protocol messages. In malicious security, dishonest parties may attempt to deviate from the specified protocol, and the protocol must guarantee that these parties cannot learn about the inputs. Since malicious protocols have to satisfy stronger guarantees in general such construction are less efficient than semi-honest protocols.
+revealed about the inputs is the output of the computation and whatever can be inherently inferred from it.
+There are two main types of MPC protocols in terms of their security guarantees: semi-honest and malicious protocols \cite{Goldreich:2004:FCV:975541, cryptoeprint:2010:551}. In semi-honest security, it is assumed that the parties will follow the protocol as specified, but they can try to infer information about the input from the protocol messages. In malicious security, dishonest parties may attempt to deviate from the specified protocol, and the protocol must guarantee that these parties cannot learn about the inputs. Since malicious protocols have to satisfy stronger guarantees in general, such construction are less efficient than semi-honest protocols.
 
-Two recent works~\cite{GSB0DZE17, MZ17} propose efficient implementation for several central building blocks for machine learning such as conjugate gradient decent (CGD) and stochastic gradient descent (SGD) as well as applications  using them such as linear and logistic regression.  The work of Gascon et al.~\cite{GSB0DZE17} uses the framework for semi-honest computation Obliv-C~\cite{cryptoeprint:2015:1153} and proposes
-several different methods for solving systems of linear equations. Their main premise is to use an iterative method such as CGD and show trade-offs that save a lot of computation and hence efficiency for the MPC in
-return for a small accuracy loss. They further propose a modification of CGD that has stable behavior using fix-point arithmetic since emulating floating point with the underlying MPC representation introduces substantial
+Two recent works~\cite{GSB0DZE17, MZ17} propose efficient implementation for several central building blocks for machine learning such as conjugate gradient decent (CGD) and stochastic gradient descent (SGD) as well as applications using them such as linear and logistic regression. The work of Gascon et al.~\cite{GSB0DZE17} uses the framework for semi-honest computation Obliv-C~\cite{cryptoeprint:2015:1153} and proposes
+several different methods for solving systems of linear equations. Their main premise is to use an iterative method such as CGD and demonstrate trade-offs that saves computation and hence efficiency for the MPC in
+return for a small accuracy loss. They further propose a modification of CGD that has stable behavior using fixed-point arithmetic as emulating floating point with the underlying MPC representation introduces substantial
 efficiency overhead.
 
-The work of Mohassel and Zhang~\cite{MZ17} considers stochastic gradient descent as a method for learning linear regression and logistic regression by using different activation functions. The authors consider
+The work of Mohassel and Zhang~\cite{MZ17} considers stochastic gradient descent as a method for linear regression and logistic regression with the incorporation of different activation functions. The authors consider
 arithmetic representation for the computation and propose new secure computation techniques for matrix computation, which generalize the approach for generating multiplicative triples in a preprocessing step.
- Similarly to the work of Gascon et al.~\cite{GSB0DZE17}, this paper considers techniques for approximation that save computation, for example, using a piece-wise approximation for the logistic function. The author
+ Similarly to the work of Gascon et al.~\cite{GSB0DZE17}, this paper considers techniques for approximation that save computation. For example, they use a piece-wise approximation of the logistic function. The authors
  also propose new techniques for more efficient approximate computation of fixed-point encodings.
 
-The techniques in both of the above works are restricted to the setting of two party computation. We choose the SPDZ~\cite{SPDZ12,KSS13,KPR18} framework for our implementations since it is one of the main and most comprehensive 
+The techniques in both of the above works are restricted to the setting of two party computation. We selected the SPDZ~\cite{SPDZ12,KPR18,KSS13} framework for our experiments since it is one of the main and most comprehensive 
 implementations for multiparty computation protocols, which provide malicious security and support more than two parties.
 
 \iffalse
@@ -170,9 +170,9 @@ Instead of selecting one sample per iteration, a small batch of size $B$ samples
 
 \subsubsection{Linear and Non-Linear Activation Functions}
 
-To obtain a solution for linear regression using SGD, we instantiate the cost function as $w_j = w_j  - \alpha(X_i \cdot w *-y_i)X_{ij}$, where $X$ is the input matrix and $y$ is the input vector. In this update function, the weights are adjusted element-wise by the error from the predicted and expected value at a rate determined by $\alpha$.
+To obtain a solution for linear regression using SGD, we instantiate the update function to a learned weight as $w_j = w_j  - \alpha(X_i \cdot w *-y_i)X_{ij}$, where $X$ is the input matrix and $y$ is the input vector. In this update function, the weights are adjusted element-wise by the error from the predicted and expected value at a rate determined by $\alpha$.
 
-Logistic regression is a classification algorithm for modeling a binary dependent variable. Logistic regression fits the logistic function $f(u) = \frac{1}{1+e^-u}$ to the input. The corresponding update function for mini-batched SGD for logistic regression is $ w = w - \frac{1}{|B|} \alpha X^{T}_{B} \times f(X_{B} \times w - Y_{B})$, where $f$ maps the predicted value into the binary output space. Mohassel and Zhang [8] proposed the following piecewise function as approximation for $f$:
+Logistic regression is a classification algorithm for modeling a binary dependent variable. Logistic regression fits the logistic function $f(u) = \frac{1}{1+e^-u}$ to the input. The corresponding update function for mini-batched SGD for logistic regression is $w = w - \frac{1}{|B|} \alpha X^{T}_{B} \times f(X_{B} \times w - Y_{B})$, where $f$ maps the predicted value into the binary output space. Mohassel and Zhang [8] proposed the following piecewise function as approximation for $f$:
 
 \[
   f(u) =
@@ -223,7 +223,7 @@ For LDLT, Cholesky and various iterations of CGD, we evaluated on synthetically 
    \label{fig:result2}  
 \end{figure}
 
-Figure~\ref{fig:result2} compares SGD on MNIST and Arcene results. It shows that the number of bits of precision needed to get good accuracy is highly dependent on the dataset. For MNIST, 13 bits was sufficient to match plaintext accuracy but 28 bits were needed for Arcene. The MNIST data contains only 784 features while there are 10,000 in the Arcene data, 3,000 of which are considered "probes" with no predictive power, which could explain the lower overall accuracy of \cite{MZ17}. While the numbers in the MNIST data ranged from 0 to 9, Mohassel and Zhang~\cite{MZ17} only used 0s and 1s labels from the dataset, reducing it to a binary problem. We replicated this approach and present the results below. We did run the computation to predict all 10 digits, but found that SGD only achieved a much lower accuracy of about 19\%. We also compared the root mean squared error (RMSE) of SGD on 9 UCI open-sourced datasets of ranging sizes to results in \cite{GSB0DZE17}. Our results in the SPDZ secure setting typically increased RMSE by about $5-20\%$ compared to plaintext computation, but still outperformed RMSE results from \cite{GSB0DZE17} in both CGD and SGD.
+Figure~\ref{fig:result2} compares SGD on MNIST and Arcene results. It shows that the number of bits of precision needed to get good accuracy is highly dependent on the dataset. For MNIST, 13 bits was sufficient to match plaintext accuracy, but 28 bits were needed for Arcene. The MNIST data contains only 784 features while there are 10,000 in the Arcene data, 3,000 of which are considered "probes" with no predictive power, which could explain the lower overall accuracy of \cite{MZ17}. While the numbers in the MNIST data ranged from 0 to 9, Mohassel and Zhang~\cite{MZ17} only used 0s and 1s labels from the dataset, reducing it to a binary problem. We replicated this approach and present the results below. We did run the computation to predict all 10 digits, but found that SGD only achieved a much lower accuracy of about 19\%. We also compared the root mean squared error (RMSE) of SGD on 9 UCI open-sourced datasets of ranging sizes to results in \cite{GSB0DZE17}. Our results in the SPDZ secure setting typically increased RMSE by about $5-20\%$ compared to plaintext computation, but still outperformed RMSE results from \cite{GSB0DZE17} in both CGD and SGD.
 
 In terms of logistic regression, for SPDZ, we did not find that the new activation function was a better alternative to taking a Taylor Series approximation for the exponential function as shown in Table~\ref{tbl1}. We found that for SPDZ, which is based on arithmetic circuits, the extra time to take a few extra degrees in the approximation was negligible.  
 
@@ -244,57 +244,75 @@ Arcene & 72.0\%    &           44.0\%              &   44.0\%        &    44.5\%
 
 \subsection{Conclusion}
 
-We found that the SPDZ outperformed Obliv-C even in a distributed machine setting by an order of magnitude and achieves comparable results to SecureML for SGD instantiations such as Linear and Logistic Regression. The accuracy findings were comparable for LDLT, Cholesky, and CGD results for SPDZ and Obliv-C, but we found that SPDZ outperformed Obliv-C on SGD. SPDZ was able to match SecureML results on SGD and Logistic Regression.
+SPDZ was able to achieve comparable accuracy for LDLT, Cholesky, and CGD when compared to Obliv-C with runtime faster by an order of magnitude on larger matrix sizes even in a distributed machine setting. SPDZ also achieved lower RMSE than Obliv-C using SGD. SPDZ was able to match accuracy and latency results for SecureML on SGD and Logistic Regression. This result is promising for SPDZ to be extended to more complex algorithms including neural networks with hidden layers.
 
 %\section*{References}
 
 \bibliographystyle{plain}
 \bibliography{refs}
 
-\iffalse
+\newpage 
 
-\small
+\section*{Supplementary Material}
 
-[1] Damg\aa rd, I., Keller, M., Larraia, E., Pastro, V., Scholl, P., \& Smart, N. P. (2013). Practical covertly secure MPC for dishonest majority?or: breaking the SPDZ limits. {\it European Symposium on Research in Computer Security}, pp.\ 1-18.
+\subsection{Three and four party runtimes}
 
-[2] Du, W., \& Atallah, M. J. (2001). Secure multi-party computation problems and their applications: a review and open problems. {\it Proceedings of the 2001 workshop on New security paradigms}, pp.\ 13-22. ACM.
+\begin{figure}[h]
+\centering
+  \caption{Run time results for 3 and 4 players in 32 bits. (Left) 3 Players. (Right) 4 Players.}
 
-[3] Friedman, J., Hastie, T., \& Tibshirani, R. (2001). The elements of statistical learning (Vol. 1, No. 10). New York, NY, USA:: Springer series in statistics.
+  \includegraphics[scale=0.6]{multi.jpg}
+  \label{fig:result4}
+\end{figure}
 
-[4] Gasc\'{o}n, A., Schoppmann, P., Balle, B., Raykova, M., Doerner, J., Zahur, S., \& Evans, D. (2017). Privacy-preserving distributed linear regression on high-dimensional data. {\it Proceedings on Privacy Enhancing Technologies, 2017(4)}, pp.\ 345-364.
+\subsection{EC2 runtimes}
 
-[5] Hazay, C., \& Lindell, Y. (2010). A Note on the Relation between the Definitions of Security for Semi-Honest and Malicious Adversaries. {\it IACR Cryptology ePrint Archive}, pp.\ 551.
+\begin{figure}[h]
+\centering
+  \caption{Run time results for 2 players deployed on EC2 instances averaged over 15 runs. (Left) 32 bits. (Right) 64 bits.}
+  \includegraphics[scale=0.7]{ec2.jpg}
+  \label{fig:result4}
+\end{figure}
 
-[6] Keller, M., Scholl, P., \& Smart, N. P. (2013). An architecture for practical actively secure MPC with dishonest majority. {\it Proceedings of the 2013 ACM SIGSAC conference on Computer \& communications security}, pp.\ 549-560. ACM.
+\subsection{Activation function runtime comparison}
 
-[7] Lindell, Y., \& Pinkas, B. (2009). A proof of security of Yao?s protocol for two-party computation. Journal of Cryptology, 22(2), 161-188.
+\begin{table}[h]
+\centering
+\label{my-label}
+\caption{Comparison of efficiency for the proposed activation function in [8] and Taylor Series approximation in SPDZ.}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+                        & \multicolumn{2}{c}{MNIST} & \multicolumn{2}{c}{Arcene} \\ \midrule
+                        & Compile      & Run        & Compile      & Run         \\
+New Activation Function & 26.01        & 18.8       & 220.14       & 224.47      \\
+2 Polynomial            & 27.79        & 19.28      & 222.85       & 239.98      \\
+5 Polynomial            & 30.32        & 19.8       & 225.33       & 241.59      \\
+7 Polynomial            & 31.99        & 20.65      & 228.33       & 239.11      \\
+10 Polynomial           & 34.24        & 20.71      & 230.81       & 240.79      \\ \bottomrule
+\end{tabular}
+\end{table}
 
-[8] Mohassel, P., \& Zhang, Y. (2017). SecureML: A system for scalable privacy-preserving machine learning. {\it 38th IEEE Symposium on Security and Privacy (SP)}, pp. 19-38. IEEE.
 
-[9] Phung, D., Tseng, V. S., Webb, G. I., Ho, B., Ganji, M., \& Rashidi, L. (Eds.). (2018). Advances in Knowledge Discovery and Data Mining: 22nd Pacific-Asia Conference, PAKDD 2018, Melbourne, VIC, Australia, June 3-6, 2018, Proceedings (Vol. 10938). Springer.
+\newpage
+\subsection{RMSE results}
 
-[10] Zahur, S., \& Evans, D. (2015). Obliv-C: A Language for Extensible Data-Oblivious Computation. {\it IACR Cryptology ePrint Archive, 2015}, 1153.
-
-\fi
+\begin{table}[h]
+\centering
+\label{my-label}
+\caption{SGD Results for 9 open sourced UCI datasets.}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Dataset Name          & \multicolumn{1}{c}{SGD Plaintext} & \multicolumn{2}{c}{\begin{tabular}[c]{@{}c@{}}SPDZ (28 bit)\\ error / time\end{tabular}} & \multicolumn{2}{c}{\begin{tabular}[c]{@{}c@{}}SPDZ (13 bit)\\ error / time\end{tabular}} \\ \midrule
+Student Performance   & 0.11                              & 0.12 (+8.34\%)                                  & 2.174                                  & 0.12(+8.34\%)                                   & 2.616                                  \\
+Auto MPG              & 0.56                              & 0.68 (+21.4\%)                                  & 0.663                                  & 0.68(+21.4\%)                                   & 0.704                                  \\
+Communities and Crime & 0.06                              & 0.17 (+183\%)                                   & 10.352                                 & 0.19 (+216\%)                                   & 12.363                                 \\
+Wine Quality          & 0.18                              & 0.19 (+5.55\%)                                  & 0.809                                  & 0.19 (+5.55\%)                                  & 0.969                                  \\
+Bike Sharing          & 0.23                              & 0.24 (+4.34\%)                                  & 0.910                                  & 0.25 (+8.69\%)                                  & 1.097                                  \\
+Blog Feedback   & 0.04                              & 0.04 (+0.0\%)                                   & 9.455                                  & 0.04 (+0.0\%)                                   & 9.091                                  \\
+CT Slices   & 0.22                              & 0.22 (+0.0\%)                                   & 16.458                                  & 0.22 (+0.0\%)                                   & 16.295                                  \\
+Year Prediction MSD   & 0.06                              & 0.06 (+0.0\%)                                   & 7.146                                  & 0.06 (+0.0\%)                                   & 8.513                                  \\
+Gas Sensor Array      & 0.20                              & 0.36 (+20.0\%)                                  & 1.151                                  & 0.36 (+20.0\%)                                  & 1.559                                  \\ \bottomrule
+\end{tabular}\\
+\end{table}
 
 \end{document}
-
-
-%Can add table back in - I am describing results instead. 
-%\begin{table}[h!]
-%\caption{Runtime results against }
-%\centering
-%\begin{tabular}{@{}llcl@{}}
-%\toprule
-%\multicolumn{1}{c}{Datasets}                                           & \multicolumn{3}{c}{Runtime (seconds)}                                      \\ \midrule
-%CGD (64 bit)                                                           & \multicolumn{1}{c}{Ours} & Ours (EC2) & \multicolumn{1}{c}{Obliv-C}        \\ \midrule
-%d=100                                                                  & 144                      & 243        & \textgreater $10^3$ \\ \midrule
-%d=500                                                                  & 527                      & 2701       & \textgreater $10^4$ \\ \midrule
-%\multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}SGD: \\ MNIST\end{tabular}} & \multicolumn{1}{c}{Ours} & \multicolumn{2}{c}{SecureML}                    \\ \cmidrule(l){2-4} 
-%                                                                       & 10200                    & \multicolumn{2}{c}{10330}                       \\ \bottomrule
-%\end{tabular}
-%\end{table}
-
-%\section{Conclusion}
-
-%Through this work, we demonstrated that SPDZ, a malicious security framework, can match the efficiency and accuracy other protocols of semi-honest through experiments on real and synthetic data. This investigation into the applicability of secure MPC on real world data demonstrates its potential change the way data is used in a variety of applications in today\textquotesingle s world.
