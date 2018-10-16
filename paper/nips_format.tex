@@ -195,8 +195,8 @@ depending on what was used in the works that we compared against (32 and 64 bits
 
 We evaluated our methods on both real-world datasets (MNIST, Arcene, and 9 other UCI open-source datasets) as well as synthetically generated data. These real-world datasets allow us to compare the accuracy results to existing works and to demonstrate that SPDZ can be used in practical settings. We used synthetic data in order to explore larger ranges of data characteristics such as dimension ($d$ = 10, 20, 50, 100, 200, 500), condition number ($cd$ = [1,10]), and number of examples ($n$ = 1000, 100000).
 
-Most of our experiments were ran using machines on the same local area network where there is no network latency. We performed tests where both parties were deployed on separate Amazon EC2 m4.large instances.
-We also ran experiment with up to four parties.
+Most of our experiments were ran using machines on the same local area network where there is no network latency. We performed tests where both parties were deployed on separate Amazon EC2 m4.large instances (see Figure~\ref{fig:result4}).
+We also ran experiment with up to four parties (see Figure~\ref{fig:result3}).
 
 %In our experiments, both parties were mostly run on one machine to simplify the procedure, but we also performed tests where both parties were deployed on separate Amazon EC2 m4.large instances. It is important to note that the distribution of players across machine only affects runtime and not the accuracy of the results. We also looked at up to four parties as a form of validation of the SPDZ protocol.
 
@@ -262,7 +262,7 @@ SPDZ was able to achieve comparable accuracy for LDLT, Cholesky, and CGD when co
   \caption{Run time results for 3 and 4 players in 32 bits. (Left) 3 Players. (Right) 4 Players.}
 
   \includegraphics[scale=0.6]{multi.jpg}
-  \label{fig:result4}
+  \label{fig:result3}
 \end{figure}
 
 \subsection{EC2 runtimes}
@@ -290,6 +290,7 @@ New Activation Function & 26.01        & 18.8       & 220.14       & 224.47     
 7 Polynomial            & 31.99        & 20.65      & 228.33       & 239.11      \\
 10 Polynomial           & 34.24        & 20.71      & 230.81       & 240.79      \\ \bottomrule
 \end{tabular}
+\label{tbl2}
 \end{table}
 
 
@@ -313,6 +314,7 @@ CT Slices   & 0.22                              & 0.22 (+0.0\%)                 
 Year Prediction MSD   & 0.06                              & 0.06 (+0.0\%)                                   & 7.146                                  & 0.06 (+0.0\%)                                   & 8.513                                  \\
 Gas Sensor Array      & 0.20                              & 0.36 (+20.0\%)                                  & 1.151                                  & 0.36 (+20.0\%)                                  & 1.559                                  \\ \bottomrule
 \end{tabular}\\
+\label{tbl3}
 \end{table}
 
 \end{document}
