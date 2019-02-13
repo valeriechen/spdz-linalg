@@ -1,11 +1,6 @@
-(C) 2016 University of Bristol. See License.txt
-
-Software for the SPDZ and MASCOT secure multi-party computation protocols.
-See `Programs/Source/` for some example MPC programs, and `tutorial.md` for
-a basic tutorial. More examples and documentation will be available in the
-coming weeks.
-
+SPDZ Framework Code from: https://github.com/bristolcrypto/SPDZ-2
 See also https://www.cs.bris.ac.uk/Research/CryptographySecurity/SPDZ
+(See links for requirements, set up of repository, and basic background on SPDZ)
 
 #### Requirements:
  - GCC
